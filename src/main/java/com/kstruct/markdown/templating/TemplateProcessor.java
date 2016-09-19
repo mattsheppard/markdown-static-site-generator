@@ -6,8 +6,6 @@ import java.util.Map;
 public class TemplateProcessor {
 
     public TemplateProcessor(Path template, String siteName, Map<String, Object> extraConfig) {
-        // TODO Auto-generated constructor stub
     }
-
     
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.kstruct.markdown.model.SiteModelNode;
 import com.kstruct.markdown.steps.BuildNavigationStructure;
+import com.kstruct.markdown.steps.SetMarkdownRenderer;
 import com.kstruct.markdown.steps.SetMarkdownTemplateProcessor;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
@@ -27,7 +28,11 @@ public class StaticSiteGenerator {
 
     public void run() {
         SiteModelNode root = new BuildNavigationStructure(inputDirectory).build();
+        
+        // We give the markdown pages some info about how they should be generated
+        new SetMarkdownRenderer().process(root);
         new SetMarkdownTemplateProcessor(template, siteName, extraConfig).process(root);
+
         // Lifecycle goes like this.
         // Read all of the inputDirectory in to navigation structure
         // Run preGenerateHook?

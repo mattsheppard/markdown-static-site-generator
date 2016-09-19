@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
 import lombok.Getter;
@@ -21,7 +22,10 @@ public class MarkdownPage extends FileNode {
 
     @Setter
     private static TemplateProcessor templateProcessor;
-    
+
+    @Setter
+    private static MarkdownRenderer markdownRenderer;
+
     public MarkdownPage(Path path, Path root, Optional<SiteModelNode> parent) {
         super(path, root, parent);
     }
