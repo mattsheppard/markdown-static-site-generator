@@ -43,6 +43,20 @@ public class MarkdownPage extends FileNode {
 
     @Override
     public Optional<byte[]> getOutputContent() {
+        if (templateProcessor == null) {
+            throw new IllegalStateException("templateProcessor required but not set");
+        }
+        
+        if (markdownRenderer == null) {
+            throw new IllegalStateException("markdownRenderer required but not set");
+        }
+        
+        byte[] bodyContent = markdownRenderer.render(this.readMarkdown());
+        byte[] renderedPage = templateProcessor.template(bodyContent); // TODO - Probably need more page context - Do we need targetPath?
+        return Optional.of(renderedPage);
+    }
+
+    private Object readMarkdown() {
         // TODO Auto-generated method stub
         return null;
     }
