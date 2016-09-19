@@ -22,9 +22,6 @@ public class StaticSiteGeneratorMojo extends AbstractMojo {
     @Parameter( property = "siteName")
     private String siteName;
 
-    @Parameter( property = "siteVersion")
-    private String siteVersion;
-
     @Parameter( property = "extraConfig")
     private Map<String,Object> extraConfig;
 
@@ -37,7 +34,7 @@ public class StaticSiteGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         getLog().info( "Will generate static site from " + inputDirectory + " into " + outputDirectory + " based on " + template );
 
-        StaticSiteGenerator ssg = new StaticSiteGenerator(inputDirectory, outputDirectory, template, siteName, siteVersion, strictLinkChecking, extraConfig);
+        StaticSiteGenerator ssg = new StaticSiteGenerator(inputDirectory, outputDirectory, template, siteName, strictLinkChecking, extraConfig);
         ssg.run();
         getLog().info( "Finished generating doc" );
     }
