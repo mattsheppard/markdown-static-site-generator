@@ -2,6 +2,7 @@ package com.kstruct.markdown.model;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +52,12 @@ public class MarkdownPage extends FileNode {
             throw new IllegalStateException("markdownRenderer required but not set");
         }
         
-        byte[] bodyContent = markdownRenderer.render(this.readMarkdown());
-        byte[] renderedPage = templateProcessor.template(bodyContent); // TODO - Probably need more page context - Do we need targetPath?
-        return Optional.of(renderedPage);
+        String bodyContent = markdownRenderer.render(this.readMarkdown());
+        String renderedPage = templateProcessor.template(bodyContent); // TODO - Probably need more page context - Do we need targetPath?
+        return Optional.of(renderedPage.getBytes(StandardCharsets.UTF_8));
     }
 
-    private Object readMarkdown() {
+    private String readMarkdown() {
         // TODO Auto-generated method stub
         return null;
     }

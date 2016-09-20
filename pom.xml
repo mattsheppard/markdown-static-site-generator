@@ -8,6 +8,10 @@
 	<description>A very simple markdown static site generator</description>
 	<packaging>maven-plugin</packaging>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.freemarker</groupId>
