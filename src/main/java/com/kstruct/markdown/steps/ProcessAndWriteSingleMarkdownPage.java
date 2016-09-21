@@ -56,7 +56,7 @@ public class ProcessAndWriteSingleMarkdownPage implements Runnable {
         }
     }
     
-    private static String toTitleCase(String input) {
+    public static String toTitleCase(String input) {
         StringBuilder titleCase = new StringBuilder();
         boolean nextTitleCase = true;
 

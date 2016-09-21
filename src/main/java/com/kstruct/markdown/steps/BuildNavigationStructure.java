@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import com.kstruct.markdown.model.Directory;
 import com.kstruct.markdown.model.MarkdownPage;
 import com.kstruct.markdown.model.SimpleFile;
-import com.kstruct.markdown.model.SiteModelNode;
+import com.kstruct.markdown.model.NavigationNode;
 
 public class BuildNavigationStructure {
 
@@ -19,17 +19,17 @@ public class BuildNavigationStructure {
         this.inputDirectory = inputDirectory;
     }
 
-    public SiteModelNode build() {
+    public NavigationNode build() {
         return buildSiteModel(inputDirectory, inputDirectory, Optional.empty());
     }
 
-    private SiteModelNode buildSiteModel(Path path, Path root, Optional<SiteModelNode> parent) {
+    private NavigationNode buildSiteModel(Path path, Path root, Optional<NavigationNode> parent) {
         if (Files.isDirectory(path)) {
             // Create the directroy, then recurse down.
             try {
                 Directory directory = new Directory(path, root, parent);
 
-                List<SiteModelNode> children = Files
+                List<NavigationNode> children = Files
                     .list(path)
                     .sorted()    // Alphabetical order is convenient - ensure it
                     .map(childPath -> {

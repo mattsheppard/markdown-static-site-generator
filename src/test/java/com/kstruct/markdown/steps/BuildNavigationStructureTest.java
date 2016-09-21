@@ -13,7 +13,7 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.model.Directory;
 import com.kstruct.markdown.model.MarkdownPage;
-import com.kstruct.markdown.model.SiteModelNode;
+import com.kstruct.markdown.model.NavigationNode;
 
 public class BuildNavigationStructureTest {
 
@@ -23,7 +23,7 @@ public class BuildNavigationStructureTest {
         Path root = fs.getPath("/root/input");
         Files.createDirectories(root);
         
-        SiteModelNode node = new BuildNavigationStructure(root).build();
+        NavigationNode node = new BuildNavigationStructure(root).build();
         
         Assert.assertTrue(node instanceof Directory);
         Assert.assertEquals(0, node.getChildren().size());
@@ -41,7 +41,7 @@ public class BuildNavigationStructureTest {
         Path inputMd2 = input.resolve("example2.md");
         Files.write(inputMd2, "# Example heading 2".getBytes(StandardCharsets.UTF_8));
 
-        SiteModelNode node = new BuildNavigationStructure(input).build();
+        NavigationNode node = new BuildNavigationStructure(input).build();
         
         Assert.assertTrue(node instanceof Directory);
         Assert.assertEquals(2, node.getChildren().size());
@@ -61,7 +61,7 @@ public class BuildNavigationStructureTest {
         Path inputMd2 = input.resolve("example漏斗回.md");
         Files.write(inputMd2, "# Chinese example".getBytes(StandardCharsets.UTF_8));
 
-        SiteModelNode node = new BuildNavigationStructure(input).build();
+        NavigationNode node = new BuildNavigationStructure(input).build();
         // Primarily we're checking that nothing blows up
         
         Assert.assertTrue(node instanceof Directory);
@@ -82,13 +82,13 @@ public class BuildNavigationStructureTest {
         Path inputMd2 = input.resolve("example1.md");
         Files.write(inputMd2, "# Example".getBytes(StandardCharsets.UTF_8));
 
-        SiteModelNode node = new BuildNavigationStructure(input).build();
+        NavigationNode node = new BuildNavigationStructure(input).build();
         // Primarily we're checking that nothing blows up
         
         Assert.assertTrue(node instanceof Directory);
         Assert.assertEquals(2, node.getChildren().size());
-        Assert.assertEquals("example1.md", node.getChildren().get(0).getRelativeSourcePath().getFileName().toString());
-        Assert.assertEquals("example2.md", node.getChildren().get(1).getRelativeSourcePath().getFileName().toString());
+        Assert.assertEquals("example1.md", node.getChildren().get(0).getRelativePath().getFileName().toString());
+        Assert.assertEquals("example2.md", node.getChildren().get(1).getRelativePath().getFileName().toString());
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.kstruct.markdown.model.SiteModelNode;
+import com.kstruct.markdown.model.NavigationNode;
 import com.kstruct.markdown.steps.BuildNavigationStructure;
 import com.kstruct.markdown.steps.CopySimpleFiles;
 import com.kstruct.markdown.steps.WriteProcessedMarkdownFiles;
@@ -34,7 +34,7 @@ public class StaticSiteGenerator {
     }
 
     public void run() throws InterruptedException {
-        SiteModelNode navigationRoot = new BuildNavigationStructure(inputDirectory).build();
+        NavigationNode navigationRoot = new BuildNavigationStructure(inputDirectory).build();
 
         MarkdownRenderer markdownRenderer = new MarkdownRenderer();
         TemplateProcessor templateProcessor = new TemplateProcessor(template, navigationRoot, siteName, extraConfig);

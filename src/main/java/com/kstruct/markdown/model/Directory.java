@@ -10,24 +10,12 @@ import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Directory extends SiteModelNode {
-    public Directory(Path path, Path root, Optional<SiteModelNode> parent) {
+public class Directory extends NavigationNode {
+    public Directory(Path path, Path root, Optional<NavigationNode> parent) {
         super(path, root, parent);
     }
 
     @Getter
     @Setter
-    private List<SiteModelNode> children;
-
-    @Override
-    public Path getTargetPath(Path targetRoot) {
-        return targetRoot.resolve(getRelativeSourcePath());
-        // Maybe we'll want this to return index.md?
-    }
-
-    @Override
-    public Optional<byte[]> getOutputContent() {
-        return Optional.empty();
-        // Maybe we'll want ot generate index pages if they're absent
-    }
+    private List<NavigationNode> children;
 }

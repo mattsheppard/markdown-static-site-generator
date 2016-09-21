@@ -12,29 +12,14 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public class SimpleFile extends FileNode {
+public class SimpleFile extends NavigationNode {
     
-    public SimpleFile(Path path, Path root, Optional<SiteModelNode> parent) {
+    public SimpleFile(Path path, Path root, Optional<NavigationNode> parent) {
         super(path, root, parent);
     }
 
-    public List<SiteModelNode> getChildren() {
+    public List<NavigationNode> getChildren() {
         // No children for a file
-        return new ArrayList<SiteModelNode>();
+        return new ArrayList<NavigationNode>();
     }
-
-    @Override
-    public Path getTargetPath(Path targetRoot) {
-        return targetRoot.resolve(getRelativeSourcePath());
-    }
-
-    @Override
-    public Optional<byte[]> getOutputContent() {
-        try {
-            return Optional.of(Files.readAllBytes(getRelativeSourcePath()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

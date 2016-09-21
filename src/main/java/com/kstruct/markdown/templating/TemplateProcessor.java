@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.kstruct.markdown.freemarker.utils.NioTemplateLoader;
-import com.kstruct.markdown.model.SiteModelNode;
+import com.kstruct.markdown.model.NavigationNode;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -22,8 +22,10 @@ public class TemplateProcessor {
 	private String siteName;
 	private Map<String, Object> extraConfig;
 	private Template template;
+    private NavigationNode navigationRoot;
 	
-	public TemplateProcessor(Path templatePath, SiteModelNode navigationRoot, String siteName, Map<String, Object> extraConfig) {
+	public TemplateProcessor(Path templatePath, NavigationNode navigationRoot, String siteName, Map<String, Object> extraConfig) {
+        this.navigationRoot = navigationRoot;
 		this.siteName = siteName;
 		this.extraConfig = extraConfig;
 		
@@ -51,6 +53,7 @@ public class TemplateProcessor {
         dataModel.put("relativeUri", relativeUri);
 		dataModel.put("relativeRootUri", relativeRootUri);
         dataModel.put("siteName", siteName);
+        dataModel.put("navigationRoot", navigationRoot);
 		dataModel.put("extraConfig", extraConfig);
 		
 		try {

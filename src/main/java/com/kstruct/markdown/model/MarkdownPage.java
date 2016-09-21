@@ -9,42 +9,36 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import com.kstruct.markdown.steps.ProcessAndWriteSingleMarkdownPage;
 import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class MarkdownPage extends FileNode {
+public class MarkdownPage extends NavigationNode {
 
     public static final String MARKDOWN_FILE_EXTENSION = ".md";
 
     public static final String HTML_OUTPUT_FILE_EXTENSION = ".html";
 
-    @Setter
-    private static TemplateProcessor templateProcessor;
-
-    @Setter
-    private static MarkdownRenderer markdownRenderer;
-
-    public MarkdownPage(Path path, Path root, Optional<SiteModelNode> parent) {
+    public MarkdownPage(Path path, Path root, Optional<NavigationNode> parent) {
         super(path, root, parent);
     }
 
-    public List<SiteModelNode> getChildren() {
+    @Override
+    public String getTitle() {
+        String title = this.getRelativePath().getFileName().toString().replaceAll(Pattern.quote(MarkdownPage.MARKDOWN_FILE_EXTENSION) + "$", "").replace("-", " ");
+        title = ProcessAndWriteSingleMarkdownPage.toTitleCase(title);
+        return title;
+    }
+
+    public String getOutputPath() {
+        return this.getRelativePath().toString().replaceAll(Pattern.quote(MarkdownPage.MARKDOWN_FILE_EXTENSION) + "$", MarkdownPage.HTML_OUTPUT_FILE_EXTENSION);
+    }
+
+    public List<NavigationNode> getChildren() {
         // No children for a file
-        return new ArrayList<SiteModelNode>();
-    }
-
-    @Override
-    public Path getTargetPath(Path targetRoot) {
-        String relativeTargetPath = getRelativeSourcePath().toString().replaceAll(Pattern.quote(MARKDOWN_FILE_EXTENSION) + "$", HTML_OUTPUT_FILE_EXTENSION);
-        return targetRoot.resolve(relativeTargetPath);
-    }
-
-    @Override
-    public Optional<byte[]> getOutputContent() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<NavigationNode>();
     }
 }
