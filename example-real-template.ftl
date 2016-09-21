@@ -13,7 +13,7 @@
 </html>
 
  <#macro render_navigation node>
-    <li><a href="${relativeRootUri}${node.outputPath}">${node.title}</a>
+    <li><a href="${relativeRootUri}${node.outputPath}">${node.title} - ${node.hasHtmlPagesBelow?c}</a>
         <#list node.children as child>
             <#if node.hasHtmlPagesBelow>
                 <ul>
