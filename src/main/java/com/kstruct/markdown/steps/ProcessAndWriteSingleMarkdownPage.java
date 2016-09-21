@@ -35,8 +35,17 @@ public class ProcessAndWriteSingleMarkdownPage implements Runnable {
             throw new RuntimeException(e);
         }
         String htmlContent = markdownRenderer.render(markdownContent);
+        String title = path.getFileName().toString().replaceAll(Pattern.quote(MarkdownPage.MARKDOWN_FILE_EXTENSION) + "$", "").replace("-", " ");
+        title = toTitleCase(title);
+        String relativeUri = outputRoot.relativize(outputPath).toString();
+        String relativeUriToRoot = outputPath.getParent().relativize(outputRoot).toString();
+        if (!relativeUriToRoot.isEmpty()) {
+            relativeUriToRoot += "/";
+            // We need a trailing slash for building URLs from the doc's root
+            // but Path doesn't give one (because it's pointing to the directory)
+        }
         
-        String finalHtmlContent = templateProcessor.template(htmlContent);
+        String finalHtmlContent = templateProcessor.template(htmlContent, title, relativeUri, relativeUriToRoot);
         
         try {
             Files.createDirectories(outputPath.getParent());
@@ -45,6 +54,24 @@ public class ProcessAndWriteSingleMarkdownPage implements Runnable {
             // TODO need to do something with this
             throw new RuntimeException(e);
         }
+    }
+    
+    private static String toTitleCase(String input) {
+        StringBuilder titleCase = new StringBuilder();
+        boolean nextTitleCase = true;
+
+        for (char c : input.toCharArray()) {
+            if (Character.isSpaceChar(c)) {
+                nextTitleCase = true;
+            } else if (nextTitleCase) {
+                c = Character.toTitleCase(c);
+                nextTitleCase = false;
+            }
+
+            titleCase.append(c);
+        }
+
+        return titleCase.toString();
     }
 
 }

@@ -58,4 +58,36 @@ public class CopySimpleFilesTest {
         Assert.assertEquals("css", new String(Files.readAllBytes(output.resolve("example.css")), StandardCharsets.UTF_8));
         Assert.assertEquals("jpg", new String(Files.readAllBytes(output.resolve("subdir/image.jpg")), StandardCharsets.UTF_8));
     }
+
+    @Test
+    public void testCopyOverwriting() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+        Path input = fs.getPath("/root/input");
+        Files.createDirectories(input);
+
+        Path output = fs.getPath("/root/output");
+        Files.createDirectories(output);
+
+        Path exampleCss = input.resolve("example.css");
+        Files.write(exampleCss, "css".getBytes(StandardCharsets.UTF_8));
+
+        Path existingCss = output.resolve("example.css");
+        Files.createDirectories(existingCss.getParent());
+        Files.write(existingCss, "css".getBytes(StandardCharsets.UTF_8));
+        
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        ExecutorService pool = mock(ExecutorService.class);
+        // This is not ideal - We depend on the internal detail of calling execute on the pool
+        // where as there are many other possible pool methods which could be used instead.
+        Mockito.doNothing().when(pool).execute(runnableCaptor.capture());
+        
+        CopySimpleFiles csf = new CopySimpleFiles();
+        csf.queueCopyOperations(input, output, pool);
+        
+        List<Runnable> runnables = runnableCaptor.getAllValues();
+        runnables.forEach(r -> r.run());
+        // Mostly, we test that that doesn't exception out
+        
+        Assert.assertTrue(Files.exists(output.resolve("example.css")));
+    }
 }

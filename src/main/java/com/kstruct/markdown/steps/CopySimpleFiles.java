@@ -3,6 +3,7 @@ package com.kstruct.markdown.steps;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutorService;
 
 import com.kstruct.markdown.model.MarkdownPage;
@@ -31,7 +32,7 @@ public class CopySimpleFiles {
                 
                 try {
                     Files.createDirectories(outputPath.getParent());
-                    Files.copy(path, outputPath);
+                    Files.copy(path, outputPath, StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
                     // TODO - Probably need to do something real with this case
                     throw new RuntimeException(e);

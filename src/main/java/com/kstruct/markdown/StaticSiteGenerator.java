@@ -1,6 +1,9 @@
 package com.kstruct.markdown;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,7 +39,7 @@ public class StaticSiteGenerator {
         MarkdownRenderer markdownRenderer = new MarkdownRenderer();
         TemplateProcessor templateProcessor = new TemplateProcessor(template, navigationRoot, siteName, extraConfig);
 
-        ExecutorService pool = Executors.newCachedThreadPool();
+        ExecutorService pool = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);
                 
         new CopySimpleFiles().queueCopyOperations(inputDirectory, outputDirectory, pool);
         new WriteProcessedMarkdownFiles().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, pool);
@@ -54,6 +57,26 @@ public class StaticSiteGenerator {
         //   Check it's internal links
         // Else
         //   Copy it over
+    }
+    
+    public static void main(String[] args) throws InterruptedException {
+        if (args.length != 5) {
+            System.out.println("Usage: inputDirectory outputDirectory template siteName strictLinkChecking");
+            return;
+        }
+        System.out.println("Start: " + new Date().toString());
+        Map<String, Object> extraConfig = new HashMap<>();
+        extraConfig.put("version", "9.9.9");
+        
+        new StaticSiteGenerator(
+            Paths.get(args[0]) /* inputDirectory */, 
+            Paths.get(args[1]) /* outputDirectory */, 
+            Paths.get(args[2]) /* template */, 
+            args[3] /* siteName */, 
+            Boolean.parseBoolean(args[4]) /* strictLinkChecking */, 
+            extraConfig)
+        .run();
+        System.out.println("Finish: " + new Date().toString());
     }
 
 }

@@ -49,7 +49,7 @@ public class WriteProcessedMarkdownFilesTest {
         when(markdownRenderer.render(any())).thenReturn("Rendered markdown");
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template(any())).thenReturn("Templated output");
+        when(templateProcessor.template(any(), any(), any(), any())).thenReturn("Templated output");
         
         WriteProcessedMarkdownFiles wpmf = new WriteProcessedMarkdownFiles();
         wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, pool);

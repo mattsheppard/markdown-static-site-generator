@@ -42,12 +42,15 @@ public class TemplateProcessor {
 		}
 	}
 
-	public String template(String content) {
+	public String template(String content, String title, String relativeUri, String relativeRootUri) {
 		StringWriter result = new StringWriter();
 		
 		Map<String, Object> dataModel = new HashMap<>();
 		dataModel.put("content", content);
-		dataModel.put("siteName", siteName);
+        dataModel.put("title", title);
+        dataModel.put("relativeUri", relativeUri);
+		dataModel.put("relativeRootUri", relativeRootUri);
+        dataModel.put("siteName", siteName);
 		dataModel.put("extraConfig", extraConfig);
 		
 		try {

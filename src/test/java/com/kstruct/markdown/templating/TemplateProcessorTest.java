@@ -21,7 +21,7 @@ public class TemplateProcessorTest {
         Path root = fs.getPath("/root");
         Files.createDirectories(root);
         
-        String template = "<html>${siteName} ${extraConfig.extraConfigExample} ${content}</html>";
+        String template = "<html>${siteName} ${title} ${relativeUri} ${relativeRootUri} ${extraConfig.extraConfigExample} ${content}</html>";
         
         Path ftl = root.resolve("example.ftl");
         Files.write(ftl, template.getBytes(StandardCharsets.UTF_8));
@@ -31,7 +31,7 @@ public class TemplateProcessorTest {
 		extraConfig.put("extraConfigExample", "extraConfigExampleValue");
 		
 		TemplateProcessor tp = new TemplateProcessor(ftl, null, siteName, extraConfig);
-		String result = tp.template("example 漏斗回");
-		Assert.assertEquals("<html>Site Name extraConfigExampleValue example 漏斗回</html>", result);
+		String result = tp.template("example 漏斗回", "title", "relativeUri", "relativeRootUri");
+		Assert.assertEquals("<html>Site Name title relativeUri relativeRootUri extraConfigExampleValue example 漏斗回</html>", result);
     }
 }
