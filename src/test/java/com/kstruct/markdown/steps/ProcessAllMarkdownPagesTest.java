@@ -22,7 +22,7 @@ import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
-public class WriteProcessedMarkdownFilesTest {
+public class ProcessAllMarkdownPagesTest {
     @Test
     public void testCopyingFiles() throws IOException {
         FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
@@ -51,7 +51,7 @@ public class WriteProcessedMarkdownFilesTest {
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(any(), any(), any(), any())).thenReturn("Templated output");
         
-        WriteProcessedMarkdownFiles wpmf = new WriteProcessedMarkdownFiles();
+        ProcessAllMarkdownPages wpmf = new ProcessAllMarkdownPages();
         wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, pool);
 
         // Should not exist yet - Should be created by the Runnable, not during the queue call

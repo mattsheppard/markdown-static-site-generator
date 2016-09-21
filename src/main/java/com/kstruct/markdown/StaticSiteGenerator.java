@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import com.kstruct.markdown.model.NavigationNode;
 import com.kstruct.markdown.steps.BuildNavigationStructure;
 import com.kstruct.markdown.steps.CopySimpleFiles;
-import com.kstruct.markdown.steps.WriteProcessedMarkdownFiles;
+import com.kstruct.markdown.steps.ProcessAllMarkdownPages;
 import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
@@ -42,7 +42,7 @@ public class StaticSiteGenerator {
         ExecutorService pool = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);
                 
         new CopySimpleFiles().queueCopyOperations(inputDirectory, outputDirectory, pool);
-        new WriteProcessedMarkdownFiles().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, pool);
+        new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, pool);
         
         pool.shutdown();
         pool.awaitTermination(60, TimeUnit.SECONDS);

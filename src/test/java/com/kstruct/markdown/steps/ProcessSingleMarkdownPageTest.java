@@ -19,7 +19,7 @@ import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
-public class ProcessAndWriteSingleMarkdownPageTest {
+public class ProcessSingleMarkdownPageTest {
     @Test
     public void testMarkdownFile() throws IOException {
         FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
@@ -38,7 +38,7 @@ public class ProcessAndWriteSingleMarkdownPageTest {
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template("Rendered markdown", "Example", "example.html", "")).thenReturn("Templated output");
         
-        ProcessAndWriteSingleMarkdownPage processTask = new ProcessAndWriteSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor);
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor);
         
         processTask.run();
         verify(templateProcessor).template("Rendered markdown", "Example", "example.html", "");
@@ -68,7 +68,7 @@ public class ProcessAndWriteSingleMarkdownPageTest {
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template("Rendered markdown", "Deep Example", "foo/bar/goo/gar/deep-example.html", "../../../../")).thenReturn("Templated output");
         
-        ProcessAndWriteSingleMarkdownPage processTask = new ProcessAndWriteSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor);
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor);
         
         processTask.run();
         verify(templateProcessor).template("Rendered markdown", "Deep Example", "foo/bar/goo/gar/deep-example.html", "../../../../");

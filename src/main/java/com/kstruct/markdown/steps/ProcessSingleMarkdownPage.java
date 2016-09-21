@@ -14,7 +14,7 @@ import com.kstruct.markdown.utils.Markdown;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class ProcessAndWriteSingleMarkdownPage implements Runnable {
+public class ProcessSingleMarkdownPage implements Runnable {
 
     private final Path path;
     private final Path inputRoot;

@@ -11,7 +11,7 @@ import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
 import com.kstruct.markdown.utils.Markdown;
 
-public class WriteProcessedMarkdownFiles {
+public class ProcessAllMarkdownPages {
 
     public void queueConversionAndWritingOperations(Path inputRoot, Path outputRoot, MarkdownRenderer markdownRenderer, TemplateProcessor templateProcessor, ExecutorService pool) {
         queueConversionAndWritingOperationsInternal(inputRoot, inputRoot, outputRoot, markdownRenderer, templateProcessor, pool);
@@ -28,7 +28,7 @@ public class WriteProcessedMarkdownFiles {
                 throw new RuntimeException(e);
             }
         } else if (Markdown.isMarkdownPage(path)) {
-            pool.execute(new ProcessAndWriteSingleMarkdownPage(path, inputRoot, outputRoot, markdownRenderer, templateProcessor));
+            pool.execute(new ProcessSingleMarkdownPage(path, inputRoot, outputRoot, markdownRenderer, templateProcessor));
         }
     }
 
