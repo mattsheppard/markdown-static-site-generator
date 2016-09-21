@@ -8,23 +8,28 @@ import org.junit.Test;
 public class MarkdownRendererTest {
 	@Test
     public void testRendering() throws IOException {
-		MarkdownRenderer mr = new MarkdownRenderer();
-		String result = mr.render("# example heading");
-		Assert.assertEquals("<h1>example heading</h1>\n", result);
+		MarkdownProcessor mr = new MarkdownProcessor();
+		MarkdownProcessorResult result = mr.process("# example heading");
+		Assert.assertEquals("<h1>example heading</h1>\n", result.getRenderedContent());
     }
 
 	@Test
     public void testNonAsciiRendering() throws IOException {
-		MarkdownRenderer mr = new MarkdownRenderer();
-		String result = mr.render("# example 漏斗回");
-		Assert.assertEquals("<h1>example 漏斗回</h1>\n", result);
+		MarkdownProcessor mr = new MarkdownProcessor();
+		MarkdownProcessorResult result = mr.process("# example 漏斗回");
+		Assert.assertEquals("<h1>example 漏斗回</h1>\n", result.getRenderedContent());
     }
 
 	@Test
     public void testLinkFixing() throws IOException {
-		MarkdownRenderer mr = new MarkdownRenderer();
-		String result = mr.render("[title](../foo/example.md)");
-		Assert.assertEquals("<p><a href=\"../foo/example.html\">title</a></p>\n", result);
+		MarkdownProcessor mr = new MarkdownProcessor();
+		MarkdownProcessorResult result = mr.process("[title](../foo/example.md)");
+		
+		Assert.assertEquals("<p><a href=\"../foo/example.html\">title</a></p>\n", result.getRenderedContent());
+
+		// Link targets remain unchanged though
+		Assert.assertEquals(1, result.getLinkTargets().size());
+		Assert.assertTrue(result.getLinkTargets().contains("../foo/example.md"));
     }
 
 }

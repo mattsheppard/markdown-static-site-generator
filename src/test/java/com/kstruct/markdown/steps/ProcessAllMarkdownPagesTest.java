@@ -19,7 +19,8 @@ import org.mockito.Mockito;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import com.kstruct.markdown.templating.MarkdownRenderer;
+import com.kstruct.markdown.templating.MarkdownProcessor;
+import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
 public class ProcessAllMarkdownPagesTest {
@@ -45,8 +46,8 @@ public class ProcessAllMarkdownPagesTest {
         // where as there are many other possible pool methods which could be used instead.
         Mockito.doNothing().when(pool).execute(runnableCaptor.capture());
         
-        MarkdownRenderer markdownRenderer = mock(MarkdownRenderer.class);
-        when(markdownRenderer.render(any())).thenReturn("Rendered markdown");
+        MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
+        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown"));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(any(), any(), any(), any())).thenReturn("Templated output");

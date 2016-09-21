@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import com.kstruct.markdown.steps.ProcessSingleMarkdownPage;
-import com.kstruct.markdown.templating.MarkdownRenderer;
+import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.TemplateProcessor;
 import com.kstruct.markdown.utils.Markdown;
 

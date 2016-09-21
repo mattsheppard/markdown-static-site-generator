@@ -7,17 +7,17 @@ import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 
 import com.kstruct.markdown.model.MarkdownPage;
-import com.kstruct.markdown.templating.MarkdownRenderer;
+import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.TemplateProcessor;
 import com.kstruct.markdown.utils.Markdown;
 
 public class ProcessAllMarkdownPages {
 
-    public void queueConversionAndWritingOperations(Path inputRoot, Path outputRoot, MarkdownRenderer markdownRenderer, TemplateProcessor templateProcessor, ExecutorService pool) {
+    public void queueConversionAndWritingOperations(Path inputRoot, Path outputRoot, MarkdownProcessor markdownRenderer, TemplateProcessor templateProcessor, ExecutorService pool) {
         queueConversionAndWritingOperationsInternal(inputRoot, inputRoot, outputRoot, markdownRenderer, templateProcessor, pool);
     }
 
-    private void queueConversionAndWritingOperationsInternal(Path path, Path inputRoot, Path outputRoot, MarkdownRenderer markdownRenderer, TemplateProcessor templateProcessor, ExecutorService pool) {
+    private void queueConversionAndWritingOperationsInternal(Path path, Path inputRoot, Path outputRoot, MarkdownProcessor markdownRenderer, TemplateProcessor templateProcessor, ExecutorService pool) {
         if (Files.isDirectory(path)) {
             // Recurse down the input tree
             try {

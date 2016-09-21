@@ -7,7 +7,8 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 import com.kstruct.markdown.model.MarkdownPage;
-import com.kstruct.markdown.templating.MarkdownRenderer;
+import com.kstruct.markdown.templating.MarkdownProcessor;
+import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
 import com.kstruct.markdown.utils.Markdown;
 
@@ -19,7 +20,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
     private final Path path;
     private final Path inputRoot;
     private final Path outputRoot;
-    private final MarkdownRenderer markdownRenderer;
+    private final MarkdownProcessor markdownProcessor;
     private final TemplateProcessor templateProcessor;
     
     @Override
@@ -35,7 +36,8 @@ public class ProcessSingleMarkdownPage implements Runnable {
             // TODO need to do something with this
             throw new RuntimeException(e);
         }
-        String htmlContent = markdownRenderer.render(markdownContent);
+        MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent);
+        String htmlContent = processedMarkdown.getRenderedContent();
         String title = Markdown.titleForMarkdownFile(path);
         String relativeUri = outputRoot.relativize(outputPath).toString();
         String relativeUriToRoot = outputPath.getParent().relativize(outputRoot).toString();
@@ -44,6 +46,8 @@ public class ProcessSingleMarkdownPage implements Runnable {
             // We need a trailing slash for building URLs from the doc's root
             // but Path doesn't give one (because it's pointing to the directory)
         }
+        
+        // TODO - use processedMarkdown.getLinkTargets() to check links
         
         String finalHtmlContent = templateProcessor.template(htmlContent, title, relativeUri, relativeUriToRoot);
         

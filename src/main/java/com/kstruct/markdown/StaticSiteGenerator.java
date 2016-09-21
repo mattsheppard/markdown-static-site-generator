@@ -13,7 +13,7 @@ import com.kstruct.markdown.model.NavigationNode;
 import com.kstruct.markdown.steps.BuildNavigationStructure;
 import com.kstruct.markdown.steps.CopySimpleFiles;
 import com.kstruct.markdown.steps.ProcessAllMarkdownPages;
-import com.kstruct.markdown.templating.MarkdownRenderer;
+import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
 public class StaticSiteGenerator {
@@ -36,7 +36,7 @@ public class StaticSiteGenerator {
     public void run() throws InterruptedException {
         NavigationNode navigationRoot = new BuildNavigationStructure(inputDirectory).build();
 
-        MarkdownRenderer markdownRenderer = new MarkdownRenderer();
+        MarkdownProcessor markdownRenderer = new MarkdownProcessor();
         TemplateProcessor templateProcessor = new TemplateProcessor(template, navigationRoot, siteName, extraConfig);
 
         ExecutorService pool = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);

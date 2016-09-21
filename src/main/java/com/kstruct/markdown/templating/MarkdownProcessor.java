@@ -1,5 +1,8 @@
 package com.kstruct.markdown.templating;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.commonmark.html.HtmlRenderer;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
@@ -30,23 +33,26 @@ import org.commonmark.parser.Parser;
 
 import com.kstruct.markdown.utils.Markdown;
 
-public class MarkdownRenderer {
+public class MarkdownProcessor {
 
 	private Parser parser;
 	private HtmlRenderer renderer;
 
-	public MarkdownRenderer() {
+	public MarkdownProcessor() {
 		parser = Parser.builder().build();
 		renderer = HtmlRenderer.builder().build();
 	}
 
-	public String render(String markdownContent) {
+	public MarkdownProcessorResult process(String markdownContent) {
 		Node document = parser.parse(markdownContent);
-
+		
+		Set<String> linkTargets = new HashSet<>();
+		
 		// Fix links to *.md to go to *.html instead
 		document.accept(new AbstractVisitor() {
 			@Override
 			public void visit(Link link) {
+				linkTargets.add(link.getDestination());
 				link.setDestination(Markdown.renameFilenameForMarkdownPage(link.getDestination()));
 				visitChildren(link);
 			}
@@ -54,7 +60,9 @@ public class MarkdownRenderer {
 
 		String renderedContent = renderer.render(document);
 
-		return renderedContent;
+		MarkdownProcessorResult result = new MarkdownProcessorResult(renderedContent);
+		result.getLinkTargets().addAll(linkTargets);
+		return result;
 	}
 
 }

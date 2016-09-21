@@ -16,7 +16,8 @@ import org.junit.Test;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import com.kstruct.markdown.templating.MarkdownRenderer;
+import com.kstruct.markdown.templating.MarkdownProcessor;
+import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
 
 public class ProcessSingleMarkdownPageTest {
@@ -32,8 +33,8 @@ public class ProcessSingleMarkdownPageTest {
         Path inputMd = input.resolve("example.md");
         Files.write(inputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
 
-        MarkdownRenderer markdownRenderer = mock(MarkdownRenderer.class);
-        when(markdownRenderer.render(any())).thenReturn("Rendered markdown");
+        MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
+        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown"));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template("Rendered markdown", "Example", "example.html", "")).thenReturn("Templated output");
@@ -62,8 +63,8 @@ public class ProcessSingleMarkdownPageTest {
         Files.createDirectories(deepInputMd.getParent());
         Files.write(deepInputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
 
-        MarkdownRenderer markdownRenderer = mock(MarkdownRenderer.class);
-        when(markdownRenderer.render(any())).thenReturn("Rendered markdown");
+        MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
+        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown"));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template("Rendered markdown", "Deep Example", "foo/bar/goo/gar/deep-example.html", "../../../../")).thenReturn("Templated output");
