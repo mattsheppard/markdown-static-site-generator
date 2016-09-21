@@ -55,8 +55,4 @@ public class ProcessAndWriteSingleMarkdownPage implements Runnable {
             throw new RuntimeException(e);
         }
     }
-
-    
-
-
 }

@@ -40,10 +40,13 @@ public class Markdown {
 	}
 
 	public static Path renamePathForMarkdownPage(Path path) {
-		String newFilename = path.getFileName().toString();
-		newFilename = newFilename.replaceAll(Pattern.quote(MARKDOWN_FILE_EXTENSION) + "$", HTML_OUTPUT_FILE_EXTENSION);
-		Path result = path.resolveSibling(newFilename);
+		String filename = path.getFileName().toString();
+		Path result = path.resolveSibling(renameFilenameForMarkdownPage(filename));
 		return result;
+	}
+
+	public static String renameFilenameForMarkdownPage(String filename) {
+		return filename.replaceAll(Pattern.quote(MARKDOWN_FILE_EXTENSION) + "$", HTML_OUTPUT_FILE_EXTENSION);
 	}
 
 }

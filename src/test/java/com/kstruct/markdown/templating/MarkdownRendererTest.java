@@ -19,4 +19,12 @@ public class MarkdownRendererTest {
 		String result = mr.render("# example 漏斗回");
 		Assert.assertEquals("<h1>example 漏斗回</h1>\n", result);
     }
+
+	@Test
+    public void testLinkFixing() throws IOException {
+		MarkdownRenderer mr = new MarkdownRenderer();
+		String result = mr.render("[title](../foo/example.md)");
+		Assert.assertEquals("<p><a href=\"../foo/example.html\">title</a></p>\n", result);
+    }
+
 }

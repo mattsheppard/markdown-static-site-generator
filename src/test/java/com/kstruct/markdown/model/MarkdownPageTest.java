@@ -23,4 +23,15 @@ public class MarkdownPageTest {
 		
 		Assert.assertEquals("Example To Process", mdp.getTitle());
 	}
+	
+	@Test
+	public void testOutputPath() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+        Path root = fs.getPath("/root/input");
+        Files.createDirectories(root);
+		
+		MarkdownPage mdp = new MarkdownPage(root.resolve("foo/bar/example-to-process.md"), root, Optional.empty());
+		
+		Assert.assertEquals("foo/bar/example-to-process.html", mdp.getOutputPath());
+	}
 }

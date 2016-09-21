@@ -1,24 +1,60 @@
 package com.kstruct.markdown.templating;
 
 import org.commonmark.html.HtmlRenderer;
+import org.commonmark.node.AbstractVisitor;
+import org.commonmark.node.BlockQuote;
+import org.commonmark.node.BulletList;
+import org.commonmark.node.Code;
+import org.commonmark.node.CustomBlock;
+import org.commonmark.node.CustomNode;
+import org.commonmark.node.Document;
+import org.commonmark.node.Emphasis;
+import org.commonmark.node.FencedCodeBlock;
+import org.commonmark.node.HardLineBreak;
+import org.commonmark.node.Heading;
+import org.commonmark.node.HtmlBlock;
+import org.commonmark.node.HtmlInline;
+import org.commonmark.node.Image;
+import org.commonmark.node.IndentedCodeBlock;
+import org.commonmark.node.Link;
+import org.commonmark.node.ListItem;
 import org.commonmark.node.Node;
+import org.commonmark.node.OrderedList;
+import org.commonmark.node.Paragraph;
+import org.commonmark.node.SoftLineBreak;
+import org.commonmark.node.StrongEmphasis;
+import org.commonmark.node.Text;
+import org.commonmark.node.ThematicBreak;
+import org.commonmark.node.Visitor;
 import org.commonmark.parser.Parser;
+
+import com.kstruct.markdown.utils.Markdown;
 
 public class MarkdownRenderer {
 
 	private Parser parser;
 	private HtmlRenderer renderer;
 
-    public MarkdownRenderer() {
+	public MarkdownRenderer() {
 		parser = Parser.builder().build();
 		renderer = HtmlRenderer.builder().build();
-    }
+	}
 
 	public String render(String markdownContent) {
-        Node document = parser.parse(markdownContent);
-        String renderedContent = renderer.render(document);
-		
-        return renderedContent;
+		Node document = parser.parse(markdownContent);
+
+		// Fix links to *.md to go to *.html instead
+		document.accept(new AbstractVisitor() {
+			@Override
+			public void visit(Link link) {
+				link.setDestination(Markdown.renameFilenameForMarkdownPage(link.getDestination()));
+				visitChildren(link);
+			}
+		});
+
+		String renderedContent = renderer.render(document);
+
+		return renderedContent;
 	}
-    
+
 }
