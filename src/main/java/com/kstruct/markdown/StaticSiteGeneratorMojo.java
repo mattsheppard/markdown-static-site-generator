@@ -35,7 +35,11 @@ public class StaticSiteGeneratorMojo extends AbstractMojo {
         getLog().info( "Will generate static site from " + inputDirectory + " into " + outputDirectory + " based on " + template );
 
         StaticSiteGenerator ssg = new StaticSiteGenerator(inputDirectory, outputDirectory, template, siteName, strictLinkChecking, extraConfig);
-        ssg.run();
+        try {
+            ssg.run();
+        } catch (InterruptedException e) {
+            throw new MojoExecutionException("Processing Interrupted", e);
+        }
         getLog().info( "Finished generating doc" );
     }
     

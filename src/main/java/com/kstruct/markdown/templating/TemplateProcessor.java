@@ -6,10 +6,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.commonmark.node.*;
-import org.commonmark.parser.Parser;
-
 import com.kstruct.markdown.freemarker.utils.NioTemplateLoader;
+import com.kstruct.markdown.model.SiteModelNode;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -19,15 +17,13 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 import freemarker.template.Version;
 
-import org.commonmark.html.HtmlRenderer;
-
 public class TemplateProcessor {
 
 	private String siteName;
 	private Map<String, Object> extraConfig;
 	private Template template;
 	
-	public TemplateProcessor(Path templatePath, String siteName, Map<String, Object> extraConfig) {
+	public TemplateProcessor(Path templatePath, SiteModelNode navigationRoot, String siteName, Map<String, Object> extraConfig) {
 		this.siteName = siteName;
 		this.extraConfig = extraConfig;
 		

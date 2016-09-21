@@ -30,7 +30,7 @@ public class TemplateProcessorTest {
 		Map<String, Object> extraConfig = new HashMap<>();
 		extraConfig.put("extraConfigExample", "extraConfigExampleValue");
 		
-		TemplateProcessor tp = new TemplateProcessor(ftl, siteName, extraConfig);
+		TemplateProcessor tp = new TemplateProcessor(ftl, null, siteName, extraConfig);
 		String result = tp.template("example 漏斗回");
 		Assert.assertEquals("<html>Site Name extraConfigExampleValue example 漏斗回</html>", result);
     }
