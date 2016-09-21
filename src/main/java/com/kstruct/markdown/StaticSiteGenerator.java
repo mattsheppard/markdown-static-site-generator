@@ -10,6 +10,8 @@ import com.kstruct.markdown.model.SiteModelNode;
 import com.kstruct.markdown.steps.BuildNavigationStructure;
 import com.kstruct.markdown.steps.CopySimpleFiles;
 import com.kstruct.markdown.steps.WriteProcessedMarkdownFiles;
+import com.kstruct.markdown.templating.MarkdownRenderer;
+import com.kstruct.markdown.templating.TemplateProcessor;
 
 public class StaticSiteGenerator {
 
@@ -31,10 +33,13 @@ public class StaticSiteGenerator {
     public void run() throws InterruptedException {
         SiteModelNode navigationRoot = new BuildNavigationStructure(inputDirectory).build();
 
+        MarkdownRenderer markdownRenderer = new MarkdownRenderer();
+        TemplateProcessor templateProcessor = new TemplateProcessor(template, navigationRoot, siteName, extraConfig);
+
         ExecutorService pool = Executors.newCachedThreadPool();
-        
+                
         new CopySimpleFiles().queueCopyOperations(inputDirectory, outputDirectory, pool);
-        new WriteProcessedMarkdownFiles().queueConversionAndWritingOperations(inputDirectory, outputDirectory, null, null, pool);
+        new WriteProcessedMarkdownFiles().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, pool);
         
         pool.shutdown();
         pool.awaitTermination(60, TimeUnit.SECONDS);

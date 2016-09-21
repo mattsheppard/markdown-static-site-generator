@@ -32,12 +32,12 @@ public class WriteProcessedMarkdownFilesTest {
         Path output = fs.getPath("/root/output");
         Files.createDirectories(output);
 
-        Path exampleCss = input.resolve("example1.md");
-        Files.write(exampleCss, "# example 1".getBytes(StandardCharsets.UTF_8));
+        Path exampleMarkdown1 = input.resolve("example1.md");
+        Files.write(exampleMarkdown1, "# example 1".getBytes(StandardCharsets.UTF_8));
 
-        Path exampleImage = input.resolve("subdir/example2.md");
-        Files.createDirectories(exampleImage.getParent());
-        Files.write(exampleImage, "# example 2".getBytes(StandardCharsets.UTF_8));
+        Path exampleMarkdown2 = input.resolve("subdir/example2.md");
+        Files.createDirectories(exampleMarkdown2.getParent());
+        Files.write(exampleMarkdown2, "# example 2".getBytes(StandardCharsets.UTF_8));
         
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         ExecutorService pool = mock(ExecutorService.class);

@@ -26,9 +26,6 @@ public abstract class SiteModelNode {
         
         this.relativeSourcePath = root.relativize(path);
         this.rootSourcePath = path.relativize(root);
-        
-        System.out.println("relativeSourcePath:" + relativeSourcePath);
-        System.out.println("rootSourcePath:" + rootSourcePath);
     }
     
     public abstract List<SiteModelNode> getChildren();
