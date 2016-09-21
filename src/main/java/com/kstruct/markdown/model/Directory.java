@@ -17,5 +17,5 @@ public class Directory extends NavigationNode {
 
     @Getter
     @Setter
-    private List<NavigationNode> children;
+    private List<NavigationNode> children = new ArrayList<NavigationNode>();
 }

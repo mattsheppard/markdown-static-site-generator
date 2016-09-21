@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import com.kstruct.markdown.model.MarkdownPage;
 import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
+import com.kstruct.markdown.utils.Markdown;
 
 public class WriteProcessedMarkdownFiles {
 
@@ -26,7 +27,7 @@ public class WriteProcessedMarkdownFiles {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else if (path.getFileName().toString().endsWith(MarkdownPage.MARKDOWN_FILE_EXTENSION)) {
+        } else if (Markdown.isMarkdownPage(path)) {
             pool.execute(new ProcessAndWriteSingleMarkdownPage(path, inputRoot, outputRoot, markdownRenderer, templateProcessor));
         }
     }

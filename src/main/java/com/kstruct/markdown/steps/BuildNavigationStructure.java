@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.kstruct.markdown.model.Directory;
 import com.kstruct.markdown.model.MarkdownPage;
 import com.kstruct.markdown.model.SimpleFile;
+import com.kstruct.markdown.utils.Markdown;
 import com.kstruct.markdown.model.NavigationNode;
 
 public class BuildNavigationStructure {
@@ -43,7 +44,7 @@ public class BuildNavigationStructure {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else if (path.getFileName().toString().endsWith(MarkdownPage.MARKDOWN_FILE_EXTENSION)) {
+        } else if (Markdown.isMarkdownPage(path)) {
             return new MarkdownPage(path, root, parent);
         } else {
             return new SimpleFile(path, root, parent);

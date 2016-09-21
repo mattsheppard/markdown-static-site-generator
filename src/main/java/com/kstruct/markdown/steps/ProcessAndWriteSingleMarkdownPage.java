@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import com.kstruct.markdown.model.MarkdownPage;
 import com.kstruct.markdown.templating.MarkdownRenderer;
 import com.kstruct.markdown.templating.TemplateProcessor;
+import com.kstruct.markdown.utils.Markdown;
 
 import lombok.AllArgsConstructor;
 
@@ -23,9 +24,9 @@ public class ProcessAndWriteSingleMarkdownPage implements Runnable {
     
     @Override
     public void run() {
-        Path outputPath = outputRoot.resolve(inputRoot.relativize(path));
-        // TODO - Eliminate redundancy with MarkdownPage here
-        outputPath = outputPath.getParent().resolve(outputPath.getFileName().toString().replaceAll(Pattern.quote(MarkdownPage.MARKDOWN_FILE_EXTENSION) + "$", MarkdownPage.HTML_OUTPUT_FILE_EXTENSION));
+		Path relativeOutputPath = outputRoot.resolve(inputRoot.relativize(path));
+
+        Path outputPath = Markdown.renamePathForMarkdownPage(relativeOutputPath);
         
         String markdownContent;
         try {
@@ -35,8 +36,7 @@ public class ProcessAndWriteSingleMarkdownPage implements Runnable {
             throw new RuntimeException(e);
         }
         String htmlContent = markdownRenderer.render(markdownContent);
-        String title = path.getFileName().toString().replaceAll(Pattern.quote(MarkdownPage.MARKDOWN_FILE_EXTENSION) + "$", "").replace("-", " ");
-        title = toTitleCase(title);
+        String title = Markdown.titleForMarkdownFile(path);
         String relativeUri = outputRoot.relativize(outputPath).toString();
         String relativeUriToRoot = outputPath.getParent().relativize(outputRoot).toString();
         if (!relativeUriToRoot.isEmpty()) {
@@ -55,23 +55,8 @@ public class ProcessAndWriteSingleMarkdownPage implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
     
-    public static String toTitleCase(String input) {
-        StringBuilder titleCase = new StringBuilder();
-        boolean nextTitleCase = true;
 
-        for (char c : input.toCharArray()) {
-            if (Character.isSpaceChar(c)) {
-                nextTitleCase = true;
-            } else if (nextTitleCase) {
-                c = Character.toTitleCase(c);
-                nextTitleCase = false;
-            }
-
-            titleCase.append(c);
-        }
-
-        return titleCase.toString();
-    }
 
 }
