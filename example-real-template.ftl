@@ -13,9 +13,9 @@
 </html>
 
  <#macro render_navigation node>
-    <li><a href="${relativeRootUri}${node.outputPath}">${node.title} - ${node.hasHtmlPagesBelow?c}</a>
+    <li><a href="${relativeRootUri}${node.outputPath}">${node.title}</a>
         <#list node.children as child>
-            <#if node.hasHtmlPagesBelow>
+            <#if child.hasHtmlPagesBelow>
                 <ul>
                     <@render_navigation node=child/>
                 </ul>
