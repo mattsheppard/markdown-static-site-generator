@@ -14,10 +14,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 public class StaticSiteGeneratorMojo extends AbstractMojo {
 
     @Parameter( property = "inputDirectory")
-    private Path inputDirectory;
+    private File inputDirectory;
 
     @Parameter( property = "outputDirectory")
-    private Path outputDirectory;
+    private File outputDirectory;
 
     @Parameter( property = "siteName")
     private String siteName;
@@ -34,7 +34,7 @@ public class StaticSiteGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         getLog().info( "Will generate static site from " + inputDirectory + " into " + outputDirectory + " based on " + template );
 
-        StaticSiteGenerator ssg = new StaticSiteGenerator(inputDirectory, outputDirectory, template, siteName, strictLinkChecking, extraConfig);
+        StaticSiteGenerator ssg = new StaticSiteGenerator(inputDirectory.toPath(), outputDirectory.toPath(), template, siteName, strictLinkChecking, extraConfig);
         try {
             ssg.run();
         } catch (InterruptedException e) {
