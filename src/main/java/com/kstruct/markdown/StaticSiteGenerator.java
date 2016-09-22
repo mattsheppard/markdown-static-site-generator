@@ -44,16 +44,15 @@ public class StaticSiteGenerator {
         BrokenLinkRecorder brokenLinkRecorder = new BrokenLinkRecorder(inputDirectory);
 
         ExecutorService pool = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);
-                
+        
         new CopySimpleFiles().queueCopyOperations(inputDirectory, outputDirectory, pool);
         new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, brokenLinkRecorder, pool);
         
         pool.shutdown();
-        boolean terminated = pool.awaitTermination(60, TimeUnit.SECONDS);
+        boolean terminated = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
         if (!terminated) {
-            // TODO - Handle sensibly somehow
-            throw new RuntimeException("Didn't terminate correctly.");
+            throw new Error("Execution pool didn't terminate correctly - Generated doc likely incomplete");
         }
         
         if (!brokenLinkRecorder.getAllBrokenLinks().isEmpty()) {
