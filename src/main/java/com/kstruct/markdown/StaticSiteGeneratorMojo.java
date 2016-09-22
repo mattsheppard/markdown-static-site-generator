@@ -29,12 +29,12 @@ public class StaticSiteGeneratorMojo extends AbstractMojo {
     private Boolean strictLinkChecking;
 
     @Parameter( property = "template")
-    private Path template;
+    private File template;
 
     public void execute() throws MojoExecutionException {
         getLog().info( "Will generate static site from " + inputDirectory + " into " + outputDirectory + " based on " + template );
 
-        StaticSiteGenerator ssg = new StaticSiteGenerator(inputDirectory.toPath(), outputDirectory.toPath(), template, siteName, strictLinkChecking, extraConfig);
+        StaticSiteGenerator ssg = new StaticSiteGenerator(inputDirectory.toPath(), outputDirectory.toPath(), template.toPath(), siteName, strictLinkChecking, extraConfig);
         try {
             ssg.run();
         } catch (InterruptedException e) {
