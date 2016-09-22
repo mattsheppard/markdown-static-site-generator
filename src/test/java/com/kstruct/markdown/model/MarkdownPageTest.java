@@ -19,7 +19,7 @@ public class MarkdownPageTest {
         Path root = fs.getPath("/root/input");
         Files.createDirectories(root);
 		
-		MarkdownPage mdp = new MarkdownPage(root.resolve("example-to-process.md"), root, Optional.empty());
+		MarkdownPage mdp = new MarkdownPage(root.resolve("example-to_process.md"), root, Optional.empty());
 		
 		Assert.assertEquals("Example To Process", mdp.getTitle());
 	}
@@ -30,8 +30,8 @@ public class MarkdownPageTest {
         Path root = fs.getPath("/root/input");
         Files.createDirectories(root);
 		
-		MarkdownPage mdp = new MarkdownPage(root.resolve("foo/bar/example-to-process.md"), root, Optional.empty());
+		MarkdownPage mdp = new MarkdownPage(root.resolve("foo/bar/example-to_process.md"), root, Optional.empty());
 		
-		Assert.assertEquals("foo/bar/example-to-process.html", mdp.getOutputPath());
+		Assert.assertEquals("foo/bar/example-to_process.html", mdp.getOutputPath());
 	}
 }

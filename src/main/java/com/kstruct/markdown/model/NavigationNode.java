@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import com.kstruct.markdown.utils.Markdown;
+import com.kstruct.markdown.utils.MarkdownUtils;
+import com.kstruct.markdown.utils.PathUtils;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public abstract class NavigationNode {
     }
 
     public String getTitle() {
-        return relativePath.getFileName().toString();
+        return PathUtils.titleForPath(relativePath.getFileName());
     }
 
     public String getOutputPath() {
@@ -37,7 +38,7 @@ public abstract class NavigationNode {
     public abstract List<NavigationNode> getChildren();
 
     public Boolean getHasHtmlPagesBelow() {
-        if (getOutputPath().endsWith(Markdown.HTML_OUTPUT_FILE_EXTENSION)) {
+        if (getOutputPath().endsWith(MarkdownUtils.HTML_OUTPUT_FILE_EXTENSION)) {
             return true;
         } else {
             for (NavigationNode n : getChildren()) {

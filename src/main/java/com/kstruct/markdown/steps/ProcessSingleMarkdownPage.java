@@ -1,16 +1,19 @@
 package com.kstruct.markdown.steps;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.regex.Pattern;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.kstruct.markdown.model.MarkdownPage;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
-import com.kstruct.markdown.utils.Markdown;
+import com.kstruct.markdown.utils.BrokenLinkRecorder;
+import com.kstruct.markdown.utils.MarkdownUtils;
+import com.kstruct.markdown.utils.PathUtils;
 
 import lombok.AllArgsConstructor;
 
@@ -22,12 +25,13 @@ public class ProcessSingleMarkdownPage implements Runnable {
     private final Path outputRoot;
     private final MarkdownProcessor markdownProcessor;
     private final TemplateProcessor templateProcessor;
+    private final BrokenLinkRecorder brokenLinkRecorder;
     
     @Override
     public void run() {
 		Path relativeOutputPath = outputRoot.resolve(inputRoot.relativize(path));
 
-        Path outputPath = Markdown.renamePathForMarkdownPage(relativeOutputPath);
+        Path outputPath = MarkdownUtils.renamePathForMarkdownPage(relativeOutputPath);
         
         String markdownContent;
         try {
@@ -38,7 +42,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
         }
         MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent);
         String htmlContent = processedMarkdown.getRenderedContent();
-        String title = Markdown.titleForMarkdownFile(path);
+        String title = PathUtils.titleForPath(path);
         String relativeUri = outputRoot.relativize(outputPath).toString();
         String relativeUriToRoot = outputPath.getParent().relativize(outputRoot).toString();
         if (!relativeUriToRoot.isEmpty()) {
@@ -47,7 +51,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
             // but Path doesn't give one (because it's pointing to the directory)
         }
         
-        // TODO - use processedMarkdown.getLinkTargets() to check links
+        brokenLinkRecorder.recordBrokenMarkdownLinks(path, processedMarkdown.getLinkTargets());
         
         String finalHtmlContent = templateProcessor.template(htmlContent, title, relativeUri, relativeUriToRoot);
         
@@ -59,4 +63,6 @@ public class ProcessSingleMarkdownPage implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
+
 }

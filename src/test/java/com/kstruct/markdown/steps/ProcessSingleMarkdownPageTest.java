@@ -19,6 +19,7 @@ import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
+import com.kstruct.markdown.utils.BrokenLinkRecorder;
 
 public class ProcessSingleMarkdownPageTest {
     @Test
@@ -38,8 +39,10 @@ public class ProcessSingleMarkdownPageTest {
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template("Rendered markdown", "Example", "example.html", "")).thenReturn("Templated output");
-        
-        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor);
+
+        BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
+
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
         
         processTask.run();
         verify(templateProcessor).template("Rendered markdown", "Example", "example.html", "");
@@ -69,7 +72,9 @@ public class ProcessSingleMarkdownPageTest {
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template("Rendered markdown", "Deep Example", "foo/bar/goo/gar/deep-example.html", "../../../../")).thenReturn("Templated output");
         
-        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor);
+        BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
+        
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
         
         processTask.run();
         verify(templateProcessor).template("Rendered markdown", "Deep Example", "foo/bar/goo/gar/deep-example.html", "../../../../");

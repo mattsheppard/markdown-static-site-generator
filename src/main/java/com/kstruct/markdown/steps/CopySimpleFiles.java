@@ -7,7 +7,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutorService;
 
 import com.kstruct.markdown.model.MarkdownPage;
-import com.kstruct.markdown.utils.Markdown;
+import com.kstruct.markdown.utils.MarkdownUtils;
 
 public class CopySimpleFiles {
 
@@ -25,7 +25,7 @@ public class CopySimpleFiles {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else if (Markdown.isMarkdownPage(path)) {
+        } else if (MarkdownUtils.isMarkdownPage(path)) {
             // Do nothing for markdown files
         } else {
             pool.execute(() -> {

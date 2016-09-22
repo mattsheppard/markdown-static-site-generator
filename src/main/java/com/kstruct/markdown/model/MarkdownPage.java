@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import com.kstruct.markdown.steps.ProcessSingleMarkdownPage;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.TemplateProcessor;
-import com.kstruct.markdown.utils.Markdown;
+import com.kstruct.markdown.utils.MarkdownUtils;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,13 +23,8 @@ public class MarkdownPage extends NavigationNode {
 		super(path, root, parent);
 	}
 
-	@Override
-	public String getTitle() {
-		return Markdown.titleForMarkdownFile(this.getRelativePath());
-	}
-
 	public String getOutputPath() {
-		return Markdown.renamePathForMarkdownPage(this.getRelativePath()).toString();
+		return MarkdownUtils.renamePathForMarkdownPage(this.getRelativePath()).toString();
 	}
 
 	public List<NavigationNode> getChildren() {

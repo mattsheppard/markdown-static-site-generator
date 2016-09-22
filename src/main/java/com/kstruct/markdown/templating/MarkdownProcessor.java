@@ -1,5 +1,6 @@
 package com.kstruct.markdown.templating;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import org.commonmark.node.ThematicBreak;
 import org.commonmark.node.Visitor;
 import org.commonmark.parser.Parser;
 
-import com.kstruct.markdown.utils.Markdown;
+import com.kstruct.markdown.utils.MarkdownUtils;
 
 public class MarkdownProcessor {
 
@@ -52,8 +53,9 @@ public class MarkdownProcessor {
 		document.accept(new AbstractVisitor() {
 			@Override
 			public void visit(Link link) {
+			    URI uri = URI.create(link.getDestination());
 				linkTargets.add(link.getDestination());
-				link.setDestination(Markdown.renameFilenameForMarkdownPage(link.getDestination()));
+				link.setDestination(MarkdownUtils.renameFilenameForMarkdownPage(link.getDestination()));
 				visitChildren(link);
 			}
 		});

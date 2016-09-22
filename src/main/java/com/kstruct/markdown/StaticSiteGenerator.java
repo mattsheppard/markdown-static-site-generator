@@ -15,6 +15,7 @@ import com.kstruct.markdown.steps.CopySimpleFiles;
 import com.kstruct.markdown.steps.ProcessAllMarkdownPages;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.TemplateProcessor;
+import com.kstruct.markdown.utils.BrokenLinkRecorder;
 
 public class StaticSiteGenerator {
 
@@ -23,6 +24,7 @@ public class StaticSiteGenerator {
     private Path template;
     private String siteName;
     private Map<String, Object> extraConfig;
+    private Boolean strictLinkChecking;
 
     public StaticSiteGenerator(Path inputDirectory, Path outputDirectory, Path template, String siteName,
         Boolean strictLinkChecking, Map<String, Object> extraConfig) {
@@ -30,6 +32,7 @@ public class StaticSiteGenerator {
         this.outputDirectory = outputDirectory;
         this.template = template;
         this.siteName = siteName;
+        this.strictLinkChecking = strictLinkChecking;
         this.extraConfig = extraConfig;
     }
 
@@ -38,25 +41,31 @@ public class StaticSiteGenerator {
 
         MarkdownProcessor markdownRenderer = new MarkdownProcessor();
         TemplateProcessor templateProcessor = new TemplateProcessor(template, navigationRoot, siteName, extraConfig);
+        BrokenLinkRecorder brokenLinkRecorder = new BrokenLinkRecorder(inputDirectory);
 
         ExecutorService pool = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);
                 
         new CopySimpleFiles().queueCopyOperations(inputDirectory, outputDirectory, pool);
-        new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, pool);
+        new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, brokenLinkRecorder, pool);
         
         pool.shutdown();
-        pool.awaitTermination(60, TimeUnit.SECONDS);
+        boolean terminated = pool.awaitTermination(60, TimeUnit.SECONDS);
 
-        // Lifecycle goes like this.
-        // Read all of the inputDirectory in to navigation structure
-        // Run preGenerateHook?
-        // For each file in input:
-        //   If it's markdown, convert it
-        //   Template it
-        //   Fix links in result (.md -> .html)
-        //   Check it's internal links
-        // Else
-        //   Copy it over
+        if (!terminated) {
+            // TODO - Handle sensibly somehow
+            throw new RuntimeException("Didn't terminate correctly.");
+        }
+        
+        if (!brokenLinkRecorder.getAllBrokenLinks().isEmpty()) {
+            for (Path key : brokenLinkRecorder.getAllBrokenLinks().keySet()) {
+             // TODO - Logging sensibly
+                System.err.println("Broken link(s) in " + key + ":\n  - " + String.join("\n  - ", brokenLinkRecorder.getAllBrokenLinks().get(key)));
+            }
+            System.err.flush();
+            if (strictLinkChecking) {
+                throw new Error("Some broken links detected - Throwing an error because strict link checking is enabled.");
+            }
+        }
     }
     
     public static void main(String[] args) throws InterruptedException {

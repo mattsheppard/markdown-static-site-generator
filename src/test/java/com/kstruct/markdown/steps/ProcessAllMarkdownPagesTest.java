@@ -22,6 +22,7 @@ import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
+import com.kstruct.markdown.utils.BrokenLinkRecorder;
 
 public class ProcessAllMarkdownPagesTest {
     @Test
@@ -51,9 +52,11 @@ public class ProcessAllMarkdownPagesTest {
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(any(), any(), any(), any())).thenReturn("Templated output");
-        
+
+        BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
+
         ProcessAllMarkdownPages wpmf = new ProcessAllMarkdownPages();
-        wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, pool);
+        wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, pool);
 
         // Should not exist yet - Should be created by the Runnable, not during the queue call
         Assert.assertFalse(Files.exists(output.resolve("example1.html")));
