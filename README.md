@@ -1,6 +1,6 @@
 # markdown-static-site-generator
 
-A simple maven plugin that takes a directory of markdown files (and resource files) and produces a static website. We expect commnmark style markdown syntax, and use the freemarker templating language to wrap the generated pages.
+A simple maven plugin that takes a directory of markdown files (and resource files) and produces a static website. We expect commonmark style markdown syntax, and use the freemarker templating language to wrap the generated pages.
 
 ## So, how do I use it?
 
