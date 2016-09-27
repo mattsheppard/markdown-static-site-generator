@@ -49,6 +49,6 @@ Once you've got it available, you install it as a maven plugin on a project with
 
 ## Why not JBake, mkdocs, something else?
 
-Most of the something-elses seem to focus on blogs rather than simple websites. Mkdocs worked fine for a while, but got slow with a hundreds of pages, and doesn't provide a a good hierarchical page representation to the template (for building a complete navigation menu). I looked briefly at JBake as an alternative, but was first annoyed by the compulsory metadata block, and then never got any reply on https://groups.google.com/forum/#!topic/jbake-user/nuDCRvAeGk4.
+Most of the something-elses seem to focus on blogs rather than simple websites. Mkdocs worked fine for a while, but got slow with a hundreds of pages, and doesn't provide a a good hierarchical page representation to the template (for building a complete navigation menu). I looked briefly at JBake as an alternative, but was first annoyed by the compulsory metadata block, and then never got any reply on https://groups.google.com/forum/#!topic/jbake-user/nuDCRvAeGk4 (which, of course, did get a response 2 hours after writing that - though not a positive one).
 
 No doubt someone will now point out the perfect existing system for what I want, or why building my own will be harder than I think (https://twitter.com/pinboard/status/761656824202276864) - Oh well.
