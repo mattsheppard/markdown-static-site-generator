@@ -1,11 +1,15 @@
 package com.kstruct.markdown.templating;
 
+import static org.mockito.ArgumentMatchers.any;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -13,6 +17,7 @@ import org.junit.Test;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
+import com.kstruct.markdown.model.TocEntry;
 
 public class TemplateProcessorTest {
 	@Test
@@ -21,7 +26,7 @@ public class TemplateProcessorTest {
         Path root = fs.getPath("/root");
         Files.createDirectories(root);
         
-        String template = "<html>${siteName} ${title} ${relativeUri} ${relativeRootUri} ${extraConfig.extraConfigExample} ${content}</html>";
+        String template = "<html>${siteName} ${title} ${(toc?first).label} ${relativeUri} ${relativeRootUri} ${extraConfig.extraConfigExample} ${content}</html>";
         
         Path ftl = root.resolve("example.ftl");
         Files.write(ftl, template.getBytes(StandardCharsets.UTF_8));
@@ -30,8 +35,11 @@ public class TemplateProcessorTest {
 		Map<String, Object> extraConfig = new HashMap<>();
 		extraConfig.put("extraConfigExample", "extraConfigExampleValue");
 		
+		List<TocEntry> toc = new ArrayList<>();
+		toc.add(new TocEntry("label", 1, 1));
+		
 		TemplateProcessor tp = new TemplateProcessor(ftl, null, siteName, extraConfig);
-		String result = tp.template("example 漏斗回", "title", "relativeUri", "relativeRootUri");
-		Assert.assertEquals("<html>Site Name title relativeUri relativeRootUri extraConfigExampleValue example 漏斗回</html>", result);
+		String result = tp.template("example 漏斗回", "title", toc, "relativeUri", "relativeRootUri");
+		Assert.assertEquals("<html>Site Name title label relativeUri relativeRootUri extraConfigExampleValue example 漏斗回</html>", result);
     }
 }

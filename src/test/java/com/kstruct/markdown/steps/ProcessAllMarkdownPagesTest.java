@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -48,10 +49,10 @@ public class ProcessAllMarkdownPagesTest {
         Mockito.doNothing().when(pool).execute(runnableCaptor.capture());
         
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown"));
+        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new ArrayList<>()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template(any(), any(), any(), any())).thenReturn("Templated output");
+        when(templateProcessor.template(any(), any(), any(), any(), any())).thenReturn("Templated output");
 
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
 

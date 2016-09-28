@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.kstruct.markdown.freemarker.utils.NioTemplateLoader;
 import com.kstruct.markdown.model.NavigationNode;
+import com.kstruct.markdown.model.TocEntry;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -44,12 +46,13 @@ public class TemplateProcessor {
 		}
 	}
 
-	public String template(String content, String title, String relativeUri, String relativeRootUri) {
+	public String template(String content, String title, List<TocEntry> toc, String relativeUri, String relativeRootUri) {
 		StringWriter result = new StringWriter();
 		
 		Map<String, Object> dataModel = new HashMap<>();
 		dataModel.put("content", content);
         dataModel.put("title", title);
+        dataModel.put("toc", toc);
         dataModel.put("relativeUri", relativeUri);
 		dataModel.put("relativeRootUri", relativeRootUri);
         dataModel.put("siteName", siteName);

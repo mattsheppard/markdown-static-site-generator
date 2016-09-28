@@ -5,9 +5,11 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.kstruct.markdown.model.TocEntry;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
@@ -42,6 +44,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
         }
         MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent);
         String htmlContent = processedMarkdown.getRenderedContent();
+        List<TocEntry> toc = processedMarkdown.getToc();
         String title = PathUtils.titleForPath(path);
         String relativeUri = outputRoot.relativize(outputPath).toString();
         String relativeUriToRoot = outputPath.getParent().relativize(outputRoot).toString();
@@ -53,7 +56,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
         
         brokenLinkRecorder.recordBrokenMarkdownLinks(path, processedMarkdown.getLinkTargets());
         
-        String finalHtmlContent = templateProcessor.template(htmlContent, title, relativeUri, relativeUriToRoot);
+        String finalHtmlContent = templateProcessor.template(htmlContent, title, toc, relativeUri, relativeUriToRoot);
         
         try {
             Files.createDirectories(outputPath.getParent());

@@ -2,8 +2,10 @@ package com.kstruct.markdown.templating;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.commonmark.html.AttributeProvider;
 import org.commonmark.html.HtmlRenderer;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
@@ -32,16 +34,16 @@ import org.commonmark.node.ThematicBreak;
 import org.commonmark.node.Visitor;
 import org.commonmark.parser.Parser;
 
+import com.kstruct.markdown.utils.MarkdownTextVisitor;
+import com.kstruct.markdown.utils.MarkdownTocGenerator;
 import com.kstruct.markdown.utils.MarkdownUtils;
 
 public class MarkdownProcessor {
 
 	private Parser parser;
-	private HtmlRenderer renderer;
 
 	public MarkdownProcessor() {
 		parser = Parser.builder().build();
-		renderer = HtmlRenderer.builder().build();
 	}
 
 	public MarkdownProcessorResult process(String markdownContent) {
@@ -58,11 +60,20 @@ public class MarkdownProcessor {
 				link.setDestination(MarkdownUtils.renameFilenameForMarkdownPage(link.getDestination()));
 				visitChildren(link);
 			}
-		});
 
+		     @Override
+		        public void visit(Heading heading) {
+		            //System.out.println(heading.toString());
+		            visitChildren(heading);
+		        }
+		});
+		
+		MarkdownTocGenerator tocGenerator = new MarkdownTocGenerator();
+		HtmlRenderer renderer = HtmlRenderer.builder().attributeProvider(tocGenerator).build();
+		
 		String renderedContent = renderer.render(document);
 
-		MarkdownProcessorResult result = new MarkdownProcessorResult(renderedContent);
+		MarkdownProcessorResult result = new MarkdownProcessorResult(renderedContent, tocGenerator.getToc());
 		result.getLinkTargets().addAll(linkTargets);
 		return result;
 	}

@@ -1,6 +1,7 @@
 package com.kstruct.markdown.steps;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -10,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,17 +37,17 @@ public class ProcessSingleMarkdownPageTest {
         Files.write(inputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
 
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown"));
+        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new ArrayList<>()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template("Rendered markdown", "Example", "example.html", "")).thenReturn("Templated output");
+        when(templateProcessor.template(eq("Rendered markdown"), eq("Example"), any(), eq("example.html"), eq(""))).thenReturn("Templated output");
 
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
 
         ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
         
         processTask.run();
-        verify(templateProcessor).template("Rendered markdown", "Example", "example.html", "");
+        verify(templateProcessor).template(eq("Rendered markdown"), eq("Example"), any(), eq("example.html"), eq(""));
         
         Path outputPath = fs.getPath("/root/output/example.html");
         String outputContent = new String(Files.readAllBytes(outputPath), StandardCharsets.UTF_8);
@@ -67,22 +69,21 @@ public class ProcessSingleMarkdownPageTest {
         Files.write(deepInputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
 
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown"));
+        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new ArrayList<>()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template("Rendered markdown", "Deep Example", "foo/bar/goo/gar/deep-example.html", "../../../../")).thenReturn("Templated output");
+        when(templateProcessor.template(eq("Rendered markdown"), eq("Deep Example"), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"))).thenReturn("Templated output");
         
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
         
         ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
         
         processTask.run();
-        verify(templateProcessor).template("Rendered markdown", "Deep Example", "foo/bar/goo/gar/deep-example.html", "../../../../");
+        verify(templateProcessor).template(eq("Rendered markdown"), eq("Deep Example"), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"));
         
         Path deepOutputPath = fs.getPath("/root/output/foo/bar/goo/gar/deep-example.html");
         String deepOutputContent = new String(Files.readAllBytes(deepOutputPath), StandardCharsets.UTF_8);
 
         Assert.assertEquals("Templated output", deepOutputContent);
     }
-
 }
