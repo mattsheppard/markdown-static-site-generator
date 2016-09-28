@@ -2,15 +2,34 @@
     <head>
         <title>${title} - ${siteName} - Version ${extraConfig.version}</title>
     </head>
-     <body>
+    <body>
+        <#if toc.children?size &gt; 0>
+            <ul>
+                <#list toc.children as node>
+                    <@render_toc node=node/>
+                </#list>
+            </ul>
+        </#if>
+
          <h1>${title}</h1>
         ${content}
 
         <ul>
             <@render_navigation node=navigationRoot/>
         </ul>
-     </body>
+    </body>
 </html>
+
+ <#macro render_toc node>
+    <li class="size${node.details.level}">
+        <a href="#${node.details.anchorId}">${node.details.label}</a>
+        <#list node.children as child>
+                <ul>
+                    <@render_toc node=child/>
+                </ul>
+        </#list>
+    </li>
+</#macro>
 
  <#macro render_navigation node>
     <li><a href="${relativeRootUri}${node.outputPath}">${node.title}</a>

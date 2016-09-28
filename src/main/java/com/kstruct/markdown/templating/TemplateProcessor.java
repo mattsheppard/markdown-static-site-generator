@@ -10,6 +10,7 @@ import java.util.Map;
 import com.kstruct.markdown.freemarker.utils.NioTemplateLoader;
 import com.kstruct.markdown.model.NavigationNode;
 import com.kstruct.markdown.model.TocEntry;
+import com.kstruct.markdown.model.TocTree;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -46,7 +47,7 @@ public class TemplateProcessor {
 		}
 	}
 
-	public String template(String content, String title, List<TocEntry> toc, String relativeUri, String relativeRootUri) {
+	public String template(String content, String title, TocTree toc, String relativeUri, String relativeRootUri) {
 		StringWriter result = new StringWriter();
 		
 		Map<String, Object> dataModel = new HashMap<>();

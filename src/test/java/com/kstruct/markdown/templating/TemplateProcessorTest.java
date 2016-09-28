@@ -18,6 +18,7 @@ import org.junit.Test;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.model.TocEntry;
+import com.kstruct.markdown.model.TocTree;
 
 public class TemplateProcessorTest {
 	@Test
@@ -26,7 +27,7 @@ public class TemplateProcessorTest {
         Path root = fs.getPath("/root");
         Files.createDirectories(root);
         
-        String template = "<html>${siteName} ${title} ${(toc?first).label} ${relativeUri} ${relativeRootUri} ${extraConfig.extraConfigExample} ${content}</html>";
+        String template = "<html>${siteName} ${title} ${toc.details.label} ${relativeUri} ${relativeRootUri} ${extraConfig.extraConfigExample} ${content}</html>";
         
         Path ftl = root.resolve("example.ftl");
         Files.write(ftl, template.getBytes(StandardCharsets.UTF_8));
@@ -35,8 +36,7 @@ public class TemplateProcessorTest {
 		Map<String, Object> extraConfig = new HashMap<>();
 		extraConfig.put("extraConfigExample", "extraConfigExampleValue");
 		
-		List<TocEntry> toc = new ArrayList<>();
-		toc.add(new TocEntry("label", 1, 1));
+		TocTree toc = new TocTree(null, new TocEntry("label", 1));
 		
 		TemplateProcessor tp = new TemplateProcessor(ftl, null, siteName, extraConfig);
 		String result = tp.template("example 漏斗回", "title", toc, "relativeUri", "relativeRootUri");

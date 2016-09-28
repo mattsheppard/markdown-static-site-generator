@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
+import com.kstruct.markdown.model.TocTree;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
@@ -49,7 +50,7 @@ public class ProcessAllMarkdownPagesTest {
         Mockito.doNothing().when(pool).execute(runnableCaptor.capture());
         
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new ArrayList<>()));
+        when(markdownRenderer.process(any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null)));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(any(), any(), any(), any(), any())).thenReturn("Templated output");

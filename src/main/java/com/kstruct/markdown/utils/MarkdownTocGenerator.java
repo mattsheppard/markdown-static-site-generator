@@ -9,15 +9,33 @@ import org.commonmark.node.Heading;
 import org.commonmark.node.Node;
 
 import com.kstruct.markdown.model.TocEntry;
-
-import lombok.Data;
-import lombok.Getter;
+import com.kstruct.markdown.model.TocTree;
 
 public class MarkdownTocGenerator implements AttributeProvider {
-    @Getter
     private List<TocEntry> toc = new ArrayList<>();
 
-    private int nextIndex = 1;
+    public TocTree getToc() {
+        // We turn the list into a tree for the convenience of the template
+        TocTree root = new TocTree(null, new TocEntry("root", -1));
+        
+        TocTree currentNode = root;
+        
+        for (TocEntry t : toc) {
+            // Move currentNode up until it's at t's parent
+            while (t.getLevel() <= currentNode.getDetails().getLevel()) {
+                currentNode = currentNode.getParent();
+            }
+            
+            // Add t as a child of currentNode
+            TocTree newNode = new TocTree(currentNode, t);
+            currentNode.getChildren().add(newNode);
+
+            // t's newNode becomes the new currentNode
+            currentNode = newNode;
+        }
+        
+        return root;
+    }
     
     @Override
     public void setAttributes(Node node, Map<String, String> attributes) {
@@ -26,14 +44,12 @@ public class MarkdownTocGenerator implements AttributeProvider {
             node.accept(textVisitor);
             
             String label = textVisitor.getText();
-            Integer index = nextIndex;
             Integer level = ((Heading) node).getLevel();
             
-            toc.add(new TocEntry(label, index, level));
+            TocEntry tocEntry = new TocEntry(label, level);
+            toc.add(tocEntry);
             
-            attributes.put("name", index.toString());
-            
-            nextIndex++;
+            attributes.put("id", tocEntry.getAnchorId());
         }
     }
 }

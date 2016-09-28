@@ -58,10 +58,10 @@ public class IntegrationTests {
         Assert.assertEquals("jpg", new String(Files.readAllBytes(outputJpg), StandardCharsets.UTF_8));
 
         Path outputMarkdown1 = output.resolve("example1.html");
-        Assert.assertEquals("Site Name <h1 name=\"1\">example 1</h1>\n", new String(Files.readAllBytes(outputMarkdown1), StandardCharsets.UTF_8));
+        Assert.assertEquals("Site Name <h1 id=\"example-1\">example 1</h1>\n", new String(Files.readAllBytes(outputMarkdown1), StandardCharsets.UTF_8));
 
         Path outputMarkdown2 = output.resolve("subdir2/example2.html");
-        Assert.assertEquals("Site Name <h1 name=\"1\">example 2</h1>\n", new String(Files.readAllBytes(outputMarkdown2), StandardCharsets.UTF_8));
+        Assert.assertEquals("Site Name <h1 id=\"example-2\">example 2</h1>\n", new String(Files.readAllBytes(outputMarkdown2), StandardCharsets.UTF_8));
     }
     
 }
