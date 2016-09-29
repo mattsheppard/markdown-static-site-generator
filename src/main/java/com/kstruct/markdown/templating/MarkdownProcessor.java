@@ -1,7 +1,9 @@
 package com.kstruct.markdown.templating;
 
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ import org.commonmark.node.HtmlInline;
 import org.commonmark.node.Image;
 import org.commonmark.node.IndentedCodeBlock;
 import org.commonmark.node.Link;
+import org.commonmark.node.ListBlock;
 import org.commonmark.node.ListItem;
 import org.commonmark.node.Node;
 import org.commonmark.node.OrderedList;
@@ -37,45 +40,81 @@ import org.commonmark.parser.Parser;
 import com.kstruct.markdown.utils.MarkdownTextVisitor;
 import com.kstruct.markdown.utils.MarkdownTocGenerator;
 import com.kstruct.markdown.utils.MarkdownUtils;
+import com.kstruct.markdown.utils.PathUtils;
 
 public class MarkdownProcessor {
 
-	private Parser parser;
+    private Parser parser;
 
-	public MarkdownProcessor() {
-		parser = Parser.builder().build();
-	}
+    public MarkdownProcessor() {
+        parser = Parser.builder().build();
+    }
 
-	public MarkdownProcessorResult process(String markdownContent) {
-		Node document = parser.parse(markdownContent);
-		
-		Set<String> linkTargets = new HashSet<>();
-		
-		// Fix links to *.md to go to *.html instead
-		document.accept(new AbstractVisitor() {
-			@Override
-			public void visit(Link link) {
-			    URI uri = URI.create(link.getDestination());
-				linkTargets.add(link.getDestination());
-				link.setDestination(MarkdownUtils.renameFilenameForMarkdownPage(link.getDestination()));
-				visitChildren(link);
-			}
+    public MarkdownProcessorResult process(String markdownContent, List<String> siblingPages, List<String> subCategories) {
+        Node document = parser.parse(markdownContent);
 
-		     @Override
-		        public void visit(Heading heading) {
-		            //System.out.println(heading.toString());
-		            visitChildren(heading);
-		        }
-		});
-		
-		MarkdownTocGenerator tocGenerator = new MarkdownTocGenerator();
-		HtmlRenderer renderer = HtmlRenderer.builder().attributeProvider(tocGenerator).build();
-		
-		String renderedContent = renderer.render(document);
+        Set<String> linkTargets = new HashSet<>();
 
-		MarkdownProcessorResult result = new MarkdownProcessorResult(renderedContent, tocGenerator.getToc());
-		result.getLinkTargets().addAll(linkTargets);
-		return result;
-	}
+        // Modify listing headings
+        document.accept(new AbstractVisitor() {
+            @Override
+            public void visit(Heading heading) {
+                MarkdownTextVisitor textVisitor = new MarkdownTextVisitor();
+                heading.accept(textVisitor);
+                String headingName = textVisitor.getText();
+                
+                // We do some special processing with certain heading names
+                if (headingName.equals("Pages")) {
+                    BulletList list = new BulletList();
+                    for (String siblingPage : siblingPages) {
+                        ListItem item = new ListItem();
+                        String title = PathUtils.titleForPath(Paths.get(siblingPage));
+                        Link link = new Link(siblingPage, title);
+                        link.appendChild(new Text(title));
+                        item.appendChild(link);
+                        list.appendChild(item);
+                    }
+                    heading.insertAfter(list);
+                }
+
+                if (headingName.equals("Categories")) {
+                    BulletList list = new BulletList();
+                    for (String subCategory : subCategories) {
+                        ListItem item = new ListItem();
+                        String title = PathUtils.titleForPath(Paths.get(subCategory));
+                        Link link = new Link(subCategory + "/" + MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION,
+                            title);
+                        item.appendChild(link);
+                        link.appendChild(new Text(title));
+                        item.appendChild(link);
+                        list.appendChild(item);
+                    }
+                    heading.insertAfter(list);
+                }
+                
+                visitChildren(heading);
+            }
+        });
+        
+        // Fix links to *.md to go to *.html instead
+        document.accept(new AbstractVisitor() {
+            @Override
+            public void visit(Link link) {
+                URI uri = URI.create(link.getDestination());
+                linkTargets.add(link.getDestination());
+                link.setDestination(MarkdownUtils.renameFilenameForMarkdownPage(link.getDestination()));
+                visitChildren(link);
+            }
+        });
+        
+        MarkdownTocGenerator tocGenerator = new MarkdownTocGenerator();
+        HtmlRenderer renderer = HtmlRenderer.builder().attributeProvider(tocGenerator).build();
+
+        String renderedContent = renderer.render(document);
+
+        MarkdownProcessorResult result = new MarkdownProcessorResult(renderedContent, tocGenerator.getToc());
+        result.getLinkTargets().addAll(linkTargets);
+        return result;
+    }
 
 }

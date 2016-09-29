@@ -5,6 +5,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,6 +37,26 @@ public class ProcessSingleMarkdownPage implements Runnable {
 
         Path outputPath = MarkdownUtils.renamePathForMarkdownPage(relativeOutputPath);
         
+        List<String> categories = new ArrayList<>();
+        List<String> pages = new ArrayList<>();
+        
+        if (path.endsWith(MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION)) {
+            // On index pages, we need to pass the sub-pages and sub-categories through
+            try {
+                categories = Files.list(path.getParent())
+                    .filter(p -> Files.isDirectory(p))
+                    .map(p -> p.getFileName().toString())
+                    .collect(Collectors.toList());
+                pages = Files.list(path.getParent())
+                    .filter(p -> !Files.isDirectory(p))
+                    .filter(p -> !p.endsWith(MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION))
+                    .map(p -> p.getFileName().toString())
+                    .collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+                
         String markdownContent;
         try {
             markdownContent = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
@@ -43,7 +64,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
             // TODO need to do something with this
             throw new RuntimeException(e);
         }
-        MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent);
+        MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, pages, categories);
         String htmlContent = processedMarkdown.getRenderedContent();
         TocTree toc = processedMarkdown.getToc();
         String title = PathUtils.titleForPath(path);
