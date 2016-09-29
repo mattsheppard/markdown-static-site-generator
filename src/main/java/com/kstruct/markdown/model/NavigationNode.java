@@ -21,9 +21,12 @@ public abstract class NavigationNode {
     @Getter
     private Path relativePath;
 
+    private Path root;
+
     public NavigationNode(Path path, Path root, Optional<NavigationNode> parent) {
         this.parent = parent;
-
+        
+        this.root = root;
         this.relativePath = root.relativize(path);
     }
 
@@ -48,5 +51,21 @@ public abstract class NavigationNode {
             }
             return false;
         }
+    }
+    
+    public Boolean isParentOfPageAt(String relativeUri) {
+        Path activePage = root.relativize(root.resolve(relativeUri));
+        Path outputPath = root.relativize(root.resolve(this.getOutputPath()));
+        
+        Boolean result = activePage.startsWith(outputPath);
+        return result;
+    }
+    
+    public Boolean isPageAt(String relativeUri) {
+        Path activePage = root.relativize(root.resolve(relativeUri));
+        Path outputPath = root.relativize(root.resolve(this.getOutputPath()));
+        
+        Boolean result = activePage.equals(outputPath);
+        return result;
     }
 }

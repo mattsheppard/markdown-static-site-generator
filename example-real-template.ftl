@@ -32,7 +32,8 @@
 </#macro>
 
  <#macro render_navigation node>
-    <li><a href="${relativeRootUri}${node.outputPath}">${node.title}</a>
+    <li class="<#if node.isPageAt(relativeUri)>selected<#elseif node.isParentOfPageAt(relativeUri)>open</#if>">
+    	<a href="${relativeRootUri}${node.outputPath}">${node.title}</a>
         <#list node.children as child>
             <#if child.hasHtmlPagesBelow>
                 <ul>
