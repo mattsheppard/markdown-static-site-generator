@@ -41,7 +41,7 @@ public abstract class NavigationNode {
     public abstract List<NavigationNode> getChildren();
 
     public Boolean getHasHtmlPagesBelow() {
-        if (getOutputPath().endsWith(MarkdownUtils.HTML_OUTPUT_FILE_EXTENSION)) {
+        if (getOutputPath().endsWith(MarkdownUtils.HTML_OUTPUT_FILE_EXTENSION) && ! getOutputPath().endsWith("index.html")) {
             return true;
         } else {
             for (NavigationNode n : getChildren()) {
@@ -54,18 +54,22 @@ public abstract class NavigationNode {
     }
     
     public Boolean isParentOfPageAt(String relativeUri) {
-        Path activePage = root.relativize(root.resolve(relativeUri));
-        Path outputPath = root.relativize(root.resolve(this.getOutputPath()));
+        Path pageToConsider = root.relativize(root.resolve(relativeUri));
+        Path currentNodeOutputPath = root.relativize(root.resolve(this.getOutputPath()));
+        if (currentNodeOutputPath.endsWith(MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.HTML_OUTPUT_FILE_EXTENSION)) {
+            currentNodeOutputPath = currentNodeOutputPath.resolveSibling("");
+        }
         
-        Boolean result = activePage.startsWith(outputPath);
+        Boolean result = pageToConsider.startsWith(currentNodeOutputPath) 
+            || currentNodeOutputPath.getParent() == null /* Root is always open */;
         return result;
     }
     
     public Boolean isPageAt(String relativeUri) {
-        Path activePage = root.relativize(root.resolve(relativeUri));
-        Path outputPath = root.relativize(root.resolve(this.getOutputPath()));
+        Path pageToConsider = root.relativize(root.resolve(relativeUri));
+        Path currentNodeOutputPath = root.relativize(root.resolve(this.getOutputPath()));
         
-        Boolean result = activePage.equals(outputPath);
+        Boolean result = pageToConsider.equals(currentNodeOutputPath);
         return result;
     }
 }

@@ -56,4 +56,18 @@ public class NavigationNodeTest {
         Assert.assertTrue(n.isParentOfPageAt("foo/bar/index.html"));
     }
 
+    @Test
+    public void testPageDetectionForRoot() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+        Path root = fs.getPath("/root/input");
+        Files.createDirectories(root);
+        
+        NavigationNode n = new Directory(root.resolve(""), root, Optional.empty());
+        
+        Assert.assertTrue(n.isParentOfPageAt("foo/bar/example.html"));
+        Assert.assertTrue(n.isParentOfPageAt("f/bar/example.html"));
+        Assert.assertTrue(n.isParentOfPageAt("bar/example.html"));
+        Assert.assertTrue(n.isParentOfPageAt("foo/bar/index.html"));
+    }
+
 }

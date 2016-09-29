@@ -9,9 +9,8 @@ import java.util.stream.Collectors;
 
 import com.kstruct.markdown.model.Directory;
 import com.kstruct.markdown.model.MarkdownPage;
-import com.kstruct.markdown.model.SimpleFile;
-import com.kstruct.markdown.utils.MarkdownUtils;
 import com.kstruct.markdown.model.NavigationNode;
+import com.kstruct.markdown.utils.MarkdownUtils;
 
 public class BuildNavigationStructure {
 
@@ -21,10 +20,10 @@ public class BuildNavigationStructure {
     }
 
     public NavigationNode build() {
-        return buildSiteModel(inputDirectory, inputDirectory, Optional.empty());
+        return buildSiteModel(inputDirectory, inputDirectory, Optional.empty()).get();
     }
 
-    private NavigationNode buildSiteModel(Path path, Path root, Optional<NavigationNode> parent) {
+    private Optional<NavigationNode> buildSiteModel(Path path, Path root, Optional<NavigationNode> parent) {
         if (Files.isDirectory(path)) {
             // Create the directroy, then recurse down.
             try {
@@ -36,18 +35,20 @@ public class BuildNavigationStructure {
                     .map(childPath -> {
                         return buildSiteModel(childPath, root, Optional.of(directory));
                     })
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
                 
                 directory.setChildren(children);
                 
-                return directory;
+                return Optional.of(directory);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else if (MarkdownUtils.isMarkdownPage(path)) {
-            return new MarkdownPage(path, root, parent);
+        } else if (MarkdownUtils.isMarkdownPage(path) && !MarkdownUtils.isMarkdownIndexPage(path)) {
+            return Optional.of(new MarkdownPage(path, root, parent));
         } else {
-            return new SimpleFile(path, root, parent);
+            return Optional.empty();
         }
     }
 
