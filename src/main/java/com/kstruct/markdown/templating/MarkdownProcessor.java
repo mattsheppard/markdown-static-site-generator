@@ -65,43 +65,51 @@ public class MarkdownProcessor {
                                 
                 // We do some special processing with certain heading names
                 if (headingName.equals("Generated Section - Pages")) {
-                    Heading newHeading = new Heading();
-                    newHeading.setLevel(heading.getLevel());
-                    newHeading.appendChild(new Text("Pages"));
-                    heading.insertAfter(newHeading);
-                    heading.unlink(); // Remove the old heading
-                    
-                    BulletList list = new BulletList();
-                    for (String siblingPage : siblingPages) {
-                        ListItem item = new ListItem();
-                        String title = PathUtils.titleForPath(Paths.get(siblingPage));
-                        Link link = new Link(siblingPage, title);
-                        link.appendChild(new Text(title));
-                        item.appendChild(link);
-                        list.appendChild(item);
+                    if (siblingPages.isEmpty()) {
+                        heading.unlink();
+                    } else {
+                        Heading newHeading = new Heading();
+                        newHeading.setLevel(heading.getLevel());
+                        newHeading.appendChild(new Text("Pages"));
+                        heading.insertAfter(newHeading);
+                        heading.unlink(); // Remove the old heading
+                        
+                        BulletList list = new BulletList();
+                        for (String siblingPage : siblingPages) {
+                            ListItem item = new ListItem();
+                            String title = PathUtils.titleForPath(Paths.get(siblingPage));
+                            Link link = new Link(siblingPage, title);
+                            link.appendChild(new Text(title));
+                            item.appendChild(link);
+                            list.appendChild(item);
+                        }
+                        newHeading.insertAfter(list);
                     }
-                    newHeading.insertAfter(list);
                 }
 
                 if (headingName.equals("Generated Section - Categories")) {
-                    Heading newHeading = new Heading();
-                    newHeading.setLevel(heading.getLevel());
-                    newHeading.appendChild(new Text("Categories"));
-                    heading.insertAfter(newHeading);
-                    heading.unlink(); // Remove the old heading
-
-                    BulletList list = new BulletList();
-                    for (String subCategory : subCategories) {
-                        ListItem item = new ListItem();
-                        String title = PathUtils.titleForPath(Paths.get(subCategory));
-                        Link link = new Link(subCategory + "/" + MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION,
-                            title);
-                        item.appendChild(link);
-                        link.appendChild(new Text(title));
-                        item.appendChild(link);
-                        list.appendChild(item);
+                    if (subCategories.isEmpty()) {
+                        heading.unlink();
+                    } else {
+                        Heading newHeading = new Heading();
+                        newHeading.setLevel(heading.getLevel());
+                        newHeading.appendChild(new Text("Categories"));
+                        heading.insertAfter(newHeading);
+                        heading.unlink(); // Remove the old heading
+    
+                        BulletList list = new BulletList();
+                        for (String subCategory : subCategories) {
+                            ListItem item = new ListItem();
+                            String title = PathUtils.titleForPath(Paths.get(subCategory));
+                            Link link = new Link(subCategory + "/" + MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION,
+                                title);
+                            item.appendChild(link);
+                            link.appendChild(new Text(title));
+                            item.appendChild(link);
+                            list.appendChild(item);
+                        }
+                        newHeading.insertAfter(list);
                     }
-                    newHeading.insertAfter(list);
                 }
                 
                 visitChildren(heading);

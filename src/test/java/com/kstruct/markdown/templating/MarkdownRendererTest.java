@@ -82,4 +82,12 @@ public class MarkdownRendererTest {
             + "<li><a href=\"cat2/index.html\" title=\"Cat2\">Cat2</a></li>\n"
             + "</ul>\n", result.getRenderedContent());
     }
+
+    @Test
+    public void testHeadingRemovalEmptyList() throws IOException {
+        MarkdownProcessor mr = new MarkdownProcessor();
+        MarkdownProcessorResult result = mr.process("Something\n # Generated Section - Pages\n## Generated Section - Categories\n", Arrays.asList(new String[]{}), Arrays.asList(new String[]{}));
+        Assert.assertEquals("<p>Something</p>\n", result.getRenderedContent());
+    }
+
 }
