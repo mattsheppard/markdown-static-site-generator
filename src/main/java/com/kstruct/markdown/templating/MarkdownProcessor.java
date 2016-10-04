@@ -62,9 +62,15 @@ public class MarkdownProcessor {
                 MarkdownTextVisitor textVisitor = new MarkdownTextVisitor();
                 heading.accept(textVisitor);
                 String headingName = textVisitor.getText();
-                
+                                
                 // We do some special processing with certain heading names
-                if (headingName.equals("Pages")) {
+                if (headingName.equals("Generated Section - Pages")) {
+                    Heading newHeading = new Heading();
+                    newHeading.setLevel(heading.getLevel());
+                    newHeading.appendChild(new Text("Pages"));
+                    heading.insertAfter(newHeading);
+                    heading.unlink(); // Remove the old heading
+                    
                     BulletList list = new BulletList();
                     for (String siblingPage : siblingPages) {
                         ListItem item = new ListItem();
@@ -74,10 +80,16 @@ public class MarkdownProcessor {
                         item.appendChild(link);
                         list.appendChild(item);
                     }
-                    heading.insertAfter(list);
+                    newHeading.insertAfter(list);
                 }
 
-                if (headingName.equals("Categories")) {
+                if (headingName.equals("Generated Section - Categories")) {
+                    Heading newHeading = new Heading();
+                    newHeading.setLevel(heading.getLevel());
+                    newHeading.appendChild(new Text("Categories"));
+                    heading.insertAfter(newHeading);
+                    heading.unlink(); // Remove the old heading
+
                     BulletList list = new BulletList();
                     for (String subCategory : subCategories) {
                         ListItem item = new ListItem();
@@ -89,7 +101,7 @@ public class MarkdownProcessor {
                         item.appendChild(link);
                         list.appendChild(item);
                     }
-                    heading.insertAfter(list);
+                    newHeading.insertAfter(list);
                 }
                 
                 visitChildren(heading);
