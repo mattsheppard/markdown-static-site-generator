@@ -90,4 +90,11 @@ public class MarkdownRendererTest {
         Assert.assertEquals("<p>Something</p>\n", result.getRenderedContent());
     }
 
+    @Test
+    public void testTableRendering() throws IOException {
+        MarkdownProcessor mr = new MarkdownProcessor();
+        MarkdownProcessorResult result = mr.process("| Tables        | Are           | Cool  |\r\n| ------------- |:-------------:| -----:|\r\n| one      | two | three |\r\n", new ArrayList<>(), new ArrayList<>());
+        Assert.assertEquals("<table>\n<thead>\n<tr><th>Tables</th><th align=\"center\">Are</th><th align=\"right\">Cool</th></tr>\n</thead>\n<tbody>\n<tr><td>one</td><td align=\"center\">two</td><td align=\"right\">three</td></tr>\n</tbody>\n</table>\n", result.getRenderedContent());
+    }
+
 }

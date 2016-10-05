@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.commonmark.html.AttributeProvider;
+import org.commonmark.renderer.html.AttributeProvider;
 import org.commonmark.node.Heading;
 import org.commonmark.node.Node;
 

@@ -2,13 +2,14 @@ package com.kstruct.markdown.templating;
 
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.commonmark.html.AttributeProvider;
-import org.commonmark.html.HtmlRenderer;
+import org.commonmark.Extension;
+import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
 import org.commonmark.node.BulletList;
@@ -36,6 +37,10 @@ import org.commonmark.node.Text;
 import org.commonmark.node.ThematicBreak;
 import org.commonmark.node.Visitor;
 import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.AttributeProvider;
+import org.commonmark.renderer.html.AttributeProviderContext;
+import org.commonmark.renderer.html.AttributeProviderFactory;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 import com.kstruct.markdown.utils.MarkdownTextVisitor;
 import com.kstruct.markdown.utils.MarkdownTocGenerator;
@@ -44,13 +49,16 @@ import com.kstruct.markdown.utils.PathUtils;
 
 public class MarkdownProcessor {
 
-    private Parser parser;
+//    private Parser parser;
 
     public MarkdownProcessor() {
-        parser = Parser.builder().build();
     }
 
     public MarkdownProcessorResult process(String markdownContent, List<String> siblingPages, List<String> subCategories) {
+        List<Extension> extensions = Arrays.asList(TablesExtension.create());
+
+        Parser parser = Parser.builder().extensions(extensions).build();
+        
         Node document = parser.parse(markdownContent);
 
         Set<String> linkTargets = new HashSet<>();
@@ -128,7 +136,13 @@ public class MarkdownProcessor {
         });
         
         MarkdownTocGenerator tocGenerator = new MarkdownTocGenerator();
-        HtmlRenderer renderer = HtmlRenderer.builder().attributeProvider(tocGenerator).build();
+
+        HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).attributeProviderFactory(new AttributeProviderFactory() {
+            @Override
+            public AttributeProvider create(AttributeProviderContext context) {
+                return tocGenerator;
+            }
+        }).build();
 
         String renderedContent = renderer.render(document);
 
