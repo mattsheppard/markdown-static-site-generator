@@ -73,13 +73,13 @@ public class MarkdownRendererTest {
         MarkdownProcessorResult result = mr.process("# Generated Section - Pages\n## Generated Section - Categories\n", Arrays.asList(new String[]{"foo.md", "bar.md"}), Arrays.asList(new String[]{"cat1", "cat2"}));
         Assert.assertEquals("<h1 id=\"pages\">Pages</h1>\n"
             + "<ul>\n"
-            + "<li><a href=\"foo.html\" title=\"Foo\">Foo</a></li>\n"
-            + "<li><a href=\"bar.html\" title=\"Bar\">Bar</a></li>\n"
+            + "<li><a href=\"foo.html\">Foo</a></li>\n"
+            + "<li><a href=\"bar.html\">Bar</a></li>\n"
             + "</ul>\n"
             + "<h2 id=\"categories\">Categories</h2>\n"
             + "<ul>\n"
-            + "<li><a href=\"cat1/index.html\" title=\"Cat1\">Cat1</a></li>\n"
-            + "<li><a href=\"cat2/index.html\" title=\"Cat2\">Cat2</a></li>\n"
+            + "<li><a href=\"cat1/index.html\">Cat1</a></li>\n"
+            + "<li><a href=\"cat2/index.html\">Cat2</a></li>\n"
             + "</ul>\n", result.getRenderedContent());
     }
 
