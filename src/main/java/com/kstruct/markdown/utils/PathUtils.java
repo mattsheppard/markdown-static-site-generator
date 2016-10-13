@@ -6,6 +6,10 @@ import java.util.regex.Pattern;
 public class PathUtils {
 
     public static String titleForPath(Path p) {
+        if (MarkdownUtils.isMarkdownIndexPage(p)) {
+        		// Index pages are special - we title them after the directory they're in
+        		p = p.getParent();
+        }
         String title = p.getFileName().toString().replaceAll(Pattern.quote(MarkdownUtils.MARKDOWN_FILE_EXTENSION) + "$", "");
         title = title.replace("-", " ");
         title = title.replace("_", " ");

@@ -87,6 +87,40 @@ public class ProcessSingleMarkdownPageTest {
 
         Assert.assertEquals("Templated output", deepOutputContent);
     }
-    
+
+    @Test
+    public void testIndexTitle() throws IOException {
+    		String expectedTitle = "Gar";
+    	
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+        Path input = fs.getPath("/root/input");
+        Files.createDirectories(input);
+
+        Path output = fs.getPath("/root/output");
+        Files.createDirectories(output);
+
+        Path deepInputMd = input.resolve("foo/bar/goo/gar/index.md");
+        Files.createDirectories(deepInputMd.getParent());
+        Files.write(deepInputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
+
+        MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
+        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null)));
+        
+        TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
+        when(templateProcessor.template(eq("Rendered markdown"), eq(expectedTitle), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"))).thenReturn("Templated output");
+        
+        BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
+        
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
+        
+        processTask.run();
+        verify(templateProcessor).template(eq("Rendered markdown"), eq(expectedTitle), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"));
+        
+        Path deepOutputPath = fs.getPath("/root/output/foo/bar/goo/gar/index.html");
+        String deepOutputContent = new String(Files.readAllBytes(deepOutputPath), StandardCharsets.UTF_8);
+
+        Assert.assertEquals("Templated output", deepOutputContent);
+    }
+
     // TODO - Ought to have a test confirming the population of the arrays passed into markdownRenderer
 }
