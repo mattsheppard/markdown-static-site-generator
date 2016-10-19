@@ -23,4 +23,9 @@ public class Directory extends NavigationNode {
         return this.getRelativePath().resolve("index.html").toString();
     }
 
+    @Override
+    public Boolean isLeafHtmlPage() {
+        return false;
+    }
+
 }

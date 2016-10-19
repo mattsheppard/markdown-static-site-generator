@@ -31,4 +31,9 @@ public class MarkdownPage extends NavigationNode {
 		// No children for a file
 		return new ArrayList<NavigationNode>();
 	}
+
+    @Override
+    public Boolean isLeafHtmlPage() {
+        return true;
+    }
 }

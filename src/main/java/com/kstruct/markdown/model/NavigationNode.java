@@ -41,17 +41,28 @@ public abstract class NavigationNode {
     public abstract List<NavigationNode> getChildren();
 
     public Boolean getHasHtmlPagesBelow() {
-        if (getOutputPath().endsWith(MarkdownUtils.HTML_OUTPUT_FILE_EXTENSION) && ! getOutputPath().endsWith("index.html")) {
+        for (NavigationNode n : getChildren()) {
+            if (n.hasHtmlPagesBelowOrIsHtmlPageItself()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private Boolean hasHtmlPagesBelowOrIsHtmlPageItself() {
+        if (isLeafHtmlPage()) {
             return true;
         } else {
             for (NavigationNode n : getChildren()) {
-                if (n.getHasHtmlPagesBelow()) {
+                if (n.hasHtmlPagesBelowOrIsHtmlPageItself()) {
                     return true;
                 }
             }
-            return false;
+            return false; 
         }
     }
+    
+    public abstract Boolean isLeafHtmlPage();
     
     public Boolean isParentOfPageAt(String relativeUri) {
         Path pageToConsider = root.relativize(root.resolve(relativeUri));

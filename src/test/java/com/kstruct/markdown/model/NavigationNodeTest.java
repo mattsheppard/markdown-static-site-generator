@@ -23,10 +23,15 @@ public class NavigationNodeTest {
 
         Assert.assertFalse(directory.getHasHtmlPagesBelow());
 
-        directory.getChildren().add(new MarkdownPage(root.resolve("example.md"), root, Optional.of(directory)));
+        MarkdownPage child = new MarkdownPage(root.resolve("example.md"), root, Optional.of(directory));
+        directory.getChildren().add(child);
 
         Assert.assertTrue(directory.getHasHtmlPagesBelow());
-    }
+        Assert.assertFalse(directory.isLeafHtmlPage());
+
+        Assert.assertFalse(child.getHasHtmlPagesBelow());
+        Assert.assertTrue(child.isLeafHtmlPage());
+}
 
     @Test
     public void testPageDetectionForPage() throws IOException {
