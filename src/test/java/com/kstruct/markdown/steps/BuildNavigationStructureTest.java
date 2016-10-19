@@ -41,6 +41,9 @@ public class BuildNavigationStructureTest {
         Path inputMd2 = input.resolve("example2.md");
         Files.write(inputMd2, "# Example heading 2".getBytes(StandardCharsets.UTF_8));
 
+        Path nonMd = input.resolve(".gitignore");
+        Files.write(nonMd, "Should be ignored for navigation".getBytes(StandardCharsets.UTF_8));
+
         NavigationNode node = new BuildNavigationStructure(input).build();
         
         Assert.assertTrue(node instanceof Directory);

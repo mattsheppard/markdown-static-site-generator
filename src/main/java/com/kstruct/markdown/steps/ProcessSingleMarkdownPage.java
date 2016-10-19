@@ -50,6 +50,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
                 pages = Files.list(path.getParent())
                     .filter(p -> !Files.isDirectory(p))
                     .filter(p -> !p.endsWith(MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION))
+                    .filter(p -> p.endsWith(MarkdownUtils.MARKDOWN_FILE_EXTENSION))
                     .map(p -> p.getFileName().toString())
                     .collect(Collectors.toList());
             } catch (IOException e) {
