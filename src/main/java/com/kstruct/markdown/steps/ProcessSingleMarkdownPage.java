@@ -44,7 +44,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
         
         if (path.endsWith(MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION)) {
             // On index pages, we need to pass the sub-pages and sub-categories through
-            listingPageContent = listingPageContentGenerator.getListingPageContent(outputPath);
+            listingPageContent = listingPageContentGenerator.getListingPageContent(path);
         }
                 
         String markdownContent;
