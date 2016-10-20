@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.model.TocTree;
+import com.kstruct.markdown.templating.ListingPageContentGenerator;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
@@ -57,8 +58,10 @@ public class ProcessAllMarkdownPagesTest {
 
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
 
+        ListingPageContentGenerator listingPageContentGenerator = mock(ListingPageContentGenerator.class);
+        
         ProcessAllMarkdownPages wpmf = new ProcessAllMarkdownPages();
-        wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, pool);
+        wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator, pool);
 
         // Should not exist yet - Should be created by the Runnable, not during the queue call
         Assert.assertFalse(Files.exists(output.resolve("example1.html")));

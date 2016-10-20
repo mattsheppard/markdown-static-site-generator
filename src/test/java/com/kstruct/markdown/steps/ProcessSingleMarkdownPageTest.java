@@ -19,6 +19,8 @@ import org.junit.Test;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.model.TocTree;
+import com.kstruct.markdown.templating.ListingPageContentGenerator;
+import com.kstruct.markdown.templating.ListingPageContentGenerator.ListingPageContent;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
@@ -45,7 +47,9 @@ public class ProcessSingleMarkdownPageTest {
 
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
 
-        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
+        ListingPageContentGenerator listingPageContentGenerator = mock(ListingPageContentGenerator.class);
+
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator);
         
         processTask.run();
         verify(templateProcessor).template(eq("Rendered markdown"), eq("Example"), any(), eq("example.html"), eq(""));
@@ -77,7 +81,9 @@ public class ProcessSingleMarkdownPageTest {
         
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
         
-        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
+        ListingPageContentGenerator listingPageContentGenerator = mock(ListingPageContentGenerator.class);
+        
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator);
         
         processTask.run();
         verify(templateProcessor).template(eq("Rendered markdown"), eq("Deep Example"), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"));
@@ -111,7 +117,10 @@ public class ProcessSingleMarkdownPageTest {
         
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
         
-        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder);
+        ListingPageContentGenerator listingPageContentGenerator = mock(ListingPageContentGenerator.class);
+        when(listingPageContentGenerator.getListingPageContent(any())).thenReturn(new ListingPageContent());
+        
+        ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator);
         
         processTask.run();
         verify(templateProcessor).template(eq("Rendered markdown"), eq(expectedTitle), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"));

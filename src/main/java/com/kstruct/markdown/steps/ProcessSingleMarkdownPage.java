@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import com.kstruct.markdown.model.TocEntry;
 import com.kstruct.markdown.model.TocTree;
+import com.kstruct.markdown.templating.ListingPageContentGenerator;
+import com.kstruct.markdown.templating.ListingPageContentGenerator.ListingPageContent;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
 import com.kstruct.markdown.templating.TemplateProcessor;
@@ -30,6 +32,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
     private final MarkdownProcessor markdownProcessor;
     private final TemplateProcessor templateProcessor;
     private final BrokenLinkRecorder brokenLinkRecorder;
+    private final ListingPageContentGenerator listingPageContentGenerator;
     
     @Override
     public void run() {
@@ -37,25 +40,11 @@ public class ProcessSingleMarkdownPage implements Runnable {
 
         Path outputPath = MarkdownUtils.renamePathForMarkdownPage(relativeOutputPath);
         
-        List<String> categories = new ArrayList<>();
-        List<String> pages = new ArrayList<>();
+        ListingPageContent listingPageContent = new ListingPageContent();
         
         if (path.endsWith(MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION)) {
             // On index pages, we need to pass the sub-pages and sub-categories through
-            try {
-                categories = Files.list(path.getParent())
-                    .filter(p -> Files.isDirectory(p))
-                    .map(p -> p.getFileName().toString())
-                    .collect(Collectors.toList());
-                pages = Files.list(path.getParent())
-                    .filter(p -> !Files.isDirectory(p))
-                    .filter(p -> !p.endsWith(MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION))
-                    .filter(p -> !p.endsWith(MarkdownUtils.MARKDOWN_FILE_EXTENSION))
-                    .map(p -> p.getFileName().toString())
-                    .collect(Collectors.toList());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            listingPageContent = listingPageContentGenerator.getListingPageContent(outputPath);
         }
                 
         String markdownContent;
@@ -65,7 +54,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
             // TODO need to do something with this
             throw new RuntimeException(e);
         }
-        MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, pages, categories);
+        MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, listingPageContent.getPages(), listingPageContent.getCategories());
         String htmlContent = processedMarkdown.getRenderedContent();
         TocTree toc = processedMarkdown.getToc();
         String title = PathUtils.titleForPath(path);

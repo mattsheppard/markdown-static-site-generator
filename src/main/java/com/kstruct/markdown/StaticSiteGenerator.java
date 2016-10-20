@@ -13,6 +13,7 @@ import com.kstruct.markdown.model.NavigationNode;
 import com.kstruct.markdown.steps.BuildNavigationStructure;
 import com.kstruct.markdown.steps.CopySimpleFiles;
 import com.kstruct.markdown.steps.ProcessAllMarkdownPages;
+import com.kstruct.markdown.templating.ListingPageContentGenerator;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.TemplateProcessor;
 import com.kstruct.markdown.utils.BrokenLinkRecorder;
@@ -42,11 +43,12 @@ public class StaticSiteGenerator {
         MarkdownProcessor markdownRenderer = new MarkdownProcessor();
         TemplateProcessor templateProcessor = new TemplateProcessor(template, navigationRoot, siteName, extraConfig);
         BrokenLinkRecorder brokenLinkRecorder = new BrokenLinkRecorder(inputDirectory);
+        ListingPageContentGenerator listingPageContentGenerator = new ListingPageContentGenerator();
 
         ExecutorService pool = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);
         
         new CopySimpleFiles().queueCopyOperations(inputDirectory, outputDirectory, pool);
-        new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, brokenLinkRecorder, pool);
+        new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator, pool);
         
         pool.shutdown();
         boolean terminated = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
