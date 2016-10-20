@@ -46,7 +46,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
             // On index pages, we need to pass the sub-pages and sub-categories through
             listingPageContent = listingPageContentGenerator.getListingPageContent(path);
         }
-                
+        
         String markdownContent;
         try {
             markdownContent = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
@@ -57,7 +57,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
         MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, listingPageContent.getPages(), listingPageContent.getCategories());
         String htmlContent = processedMarkdown.getRenderedContent();
         TocTree toc = processedMarkdown.getToc();
-        String title = PathUtils.titleForPath(path);
+        String title = PathUtils.titleForPath(path, inputRoot);
         String relativeUri = outputRoot.relativize(outputPath).toString();
         String relativeUriToRoot = outputPath.getParent().relativize(outputRoot).toString();
         if (!relativeUriToRoot.isEmpty()) {

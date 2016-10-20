@@ -43,7 +43,7 @@ public class NavigationLinkInjector extends AbstractVisitor {
                 BulletList list = new BulletList();
                 for (String siblingPage : siblingPages) {
                     ListItem item = new ListItem();
-                    String title = PathUtils.titleForPath(Paths.get(siblingPage));
+                    String title = PathUtils.titleForPath(Paths.get(siblingPage), Paths.get("/"));
                     Link link = new Link(siblingPage, null);
                     link.appendChild(new Text(title));
                     item.appendChild(link);
@@ -66,7 +66,7 @@ public class NavigationLinkInjector extends AbstractVisitor {
                 BulletList list = new BulletList();
                 for (String subCategory : subCategories) {
                     ListItem item = new ListItem();
-                    String title = PathUtils.titleForPath(Paths.get(subCategory));
+                    String title = PathUtils.titleForPath(Paths.get(subCategory), Paths.get("/"));
                     Link link = new Link(subCategory + "/" + MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION, null);
                     item.appendChild(link);
                     link.appendChild(new Text(title));

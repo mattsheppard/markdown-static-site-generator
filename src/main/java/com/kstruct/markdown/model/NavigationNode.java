@@ -31,7 +31,7 @@ public abstract class NavigationNode {
     }
 
     public String getTitle() {
-        return PathUtils.titleForPath(relativePath.getFileName());
+        return PathUtils.titleForPath(relativePath.getFileName(), root);
     }
 
     public String getOutputPath() {
