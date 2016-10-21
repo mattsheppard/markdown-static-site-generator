@@ -38,6 +38,14 @@ public class MarkdownRendererTest {
 		Assert.assertTrue(result.getLinkTargets().contains("../foo/example.md"));
     }
 
+	   @Test
+	    public void testLinkFragment() throws IOException {
+	        MarkdownProcessor mr = new MarkdownProcessor();
+	        MarkdownProcessorResult result = mr.process("[title](example.md#someheading)", new ArrayList<>(), new ArrayList<>());
+	        
+	        Assert.assertEquals("<p><a href=\"example.html#someheading\">title</a></p>\n", result.getRenderedContent());
+	    }
+
     @Test
     public void testToc() throws IOException {
         MarkdownProcessor mr = new MarkdownProcessor();

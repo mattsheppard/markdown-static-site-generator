@@ -27,7 +27,7 @@ public class MarkdownUtils {
     }
 
     public static String renameFilenameForMarkdownPage(String filename) {
-        return filename.replaceAll(Pattern.quote(MARKDOWN_FILE_EXTENSION) + "(#|$)", HTML_OUTPUT_FILE_EXTENSION);
+        return filename.replaceAll(Pattern.quote(MARKDOWN_FILE_EXTENSION) + "(#|$)", HTML_OUTPUT_FILE_EXTENSION + "$1");
     }
 
 }
