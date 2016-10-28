@@ -75,4 +75,24 @@ public class NavigationNodeTest {
         Assert.assertTrue(n.isParentOfPageAt("foo/bar/index.html"));
     }
 
+    @Test
+    public void testFindNodeFor() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+        Path root = fs.getPath("/root/input");
+        Files.createDirectories(root);
+        
+        NavigationNode topLevel = new Directory(root.resolve(""), root, Optional.empty());
+
+        NavigationNode secondLevelA = new Directory(root.resolve("a"), root, Optional.empty());
+        NavigationNode secondLevelB = new Directory(root.resolve("b"), root, Optional.empty());
+
+        topLevel.getChildren().add(secondLevelA);
+        topLevel.getChildren().add(secondLevelB);
+
+        MarkdownPage child = new MarkdownPage(root.resolve("b/example.md"), root, Optional.of(secondLevelB));
+        secondLevelB.getChildren().add(child);
+
+        Assert.assertEquals(child, topLevel.findNodeFor("b/example.html").get());
+    }
+
 }

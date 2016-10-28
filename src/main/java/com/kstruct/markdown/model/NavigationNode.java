@@ -83,4 +83,20 @@ public abstract class NavigationNode {
         Boolean result = pageToConsider.equals(currentNodeOutputPath);
         return result;
     }
+
+    public Optional<NavigationNode> findNodeFor(String relativeUri) {
+        
+        if (this.isPageAt(relativeUri)) {
+            return Optional.of(this);
+        } else {
+            for (NavigationNode child : this.getChildren()) {
+                Optional<NavigationNode> result = child.findNodeFor(relativeUri);
+                if (result.isPresent()) {
+                    return result;
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
 }
