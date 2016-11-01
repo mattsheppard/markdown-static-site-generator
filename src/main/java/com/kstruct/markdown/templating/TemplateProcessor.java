@@ -58,6 +58,7 @@ public class TemplateProcessor {
 		dataModel.put("relativeRootUri", relativeRootUri);
         dataModel.put("siteName", siteName);
         dataModel.put("navigationRoot", navigationRoot);
+        dataModel.put("currentNavigationNode", navigationRoot.findNodeFor(relativeUri).orElse(null));
 		dataModel.put("extraConfig", extraConfig);
 		
 		try {
