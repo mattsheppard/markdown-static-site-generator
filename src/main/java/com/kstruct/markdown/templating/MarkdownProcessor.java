@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.commonmark.Extension;
+import org.commonmark.ext.front.matter.YamlFrontMatterExtension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
@@ -50,7 +51,7 @@ import com.kstruct.markdown.utils.PathUtils;
 public class MarkdownProcessor {
 
     public MarkdownProcessorResult process(String markdownContent, List<String> siblingPages, List<String> subCategories) {
-        List<Extension> extensions = Arrays.asList(TablesExtension.create());
+        List<Extension> extensions = Arrays.asList(TablesExtension.create(), YamlFrontMatterExtension.create());
 
         Parser parser = Parser.builder().extensions(extensions).build();
         

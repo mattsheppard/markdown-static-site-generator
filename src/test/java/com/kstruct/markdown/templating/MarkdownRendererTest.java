@@ -105,4 +105,11 @@ public class MarkdownRendererTest {
         Assert.assertEquals("<table>\n<thead>\n<tr><th>Tables</th><th align=\"center\">Are</th><th align=\"right\">Cool</th></tr>\n</thead>\n<tbody>\n<tr><td>one</td><td align=\"center\">two</td><td align=\"right\">three</td></tr>\n</tbody>\n</table>\n", result.getRenderedContent());
     }
 
+    @Test
+    public void testYamlFrontMatter() throws IOException {
+        MarkdownProcessor mr = new MarkdownProcessor();
+        MarkdownProcessorResult result = mr.process("---\nkey: value\n---\ncontent", new ArrayList<>(), new ArrayList<>());
+        Assert.assertEquals("<p>content</p>\n", result.getRenderedContent());
+    }
+
 }

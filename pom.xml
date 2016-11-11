@@ -46,6 +46,7 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.commonmark>0.7.1</version.commonmark>
     </properties>
 
     <dependencies>
@@ -57,12 +58,17 @@
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
             <artifactId>commonmark</artifactId>
-            <version>0.7.0</version>
+            <version>${version.commonmark}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
             <artifactId>commonmark-ext-gfm-tables</artifactId>
-            <version>0.7.0</version>
+            <version>${version.commonmark}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-yaml-front-matter</artifactId>
+            <version>${version.commonmark}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
