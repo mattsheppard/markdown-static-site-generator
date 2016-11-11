@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.kstruct.markdown.model.TocEntry;
 import com.kstruct.markdown.model.TocTree;
 
@@ -110,6 +112,7 @@ public class MarkdownRendererTest {
         MarkdownProcessor mr = new MarkdownProcessor();
         MarkdownProcessorResult result = mr.process("---\nkey: value\n---\ncontent", new ArrayList<>(), new ArrayList<>());
         Assert.assertEquals("<p>content</p>\n", result.getRenderedContent());
+        Assert.assertEquals(ImmutableMap.of("key", ImmutableList.of("value")), result.getMetadata());
     }
 
 }

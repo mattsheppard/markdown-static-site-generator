@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.commonmark.Extension;
 import org.commonmark.ext.front.matter.YamlFrontMatterExtension;
+import org.commonmark.ext.front.matter.YamlFrontMatterVisitor;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
@@ -56,7 +57,10 @@ public class MarkdownProcessor {
         Parser parser = Parser.builder().extensions(extensions).build();
         
         Node document = parser.parse(markdownContent);
-
+        
+        YamlFrontMatterVisitor yamlVisitor = new YamlFrontMatterVisitor();
+        document.accept(yamlVisitor);
+        
         Set<String> linkTargets = new HashSet<>();
 
         // Modify listing headings
@@ -84,7 +88,7 @@ public class MarkdownProcessor {
 
         String renderedContent = renderer.render(document);
 
-        MarkdownProcessorResult result = new MarkdownProcessorResult(renderedContent, tocGenerator.getToc());
+        MarkdownProcessorResult result = new MarkdownProcessorResult(renderedContent, tocGenerator.getToc(), yamlVisitor.getData());
         result.getLinkTargets().addAll(linkTargets);
         return result;
     }

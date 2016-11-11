@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.model.TocTree;
@@ -40,7 +41,7 @@ public class ProcessSingleMarkdownPageTest {
         Files.write(inputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
 
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null)));
+        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(eq("Rendered markdown"), eq("Example"), any(), eq("example.html"), eq(""))).thenReturn("Templated output");
@@ -74,7 +75,7 @@ public class ProcessSingleMarkdownPageTest {
         Files.write(deepInputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
 
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null)));
+        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(eq("Rendered markdown"), eq("Deep Example"), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"))).thenReturn("Templated output");
@@ -110,7 +111,7 @@ public class ProcessSingleMarkdownPageTest {
         Files.write(deepInputMd, "Rendered markdown".getBytes(StandardCharsets.UTF_8));
 
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null)));
+        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(eq("Rendered markdown"), eq(expectedTitle), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"))).thenReturn("Templated output");
