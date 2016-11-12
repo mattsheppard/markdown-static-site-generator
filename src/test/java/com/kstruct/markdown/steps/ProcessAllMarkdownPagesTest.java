@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.model.TocTree;
@@ -51,7 +52,7 @@ public class ProcessAllMarkdownPagesTest {
         Mockito.doNothing().when(pool).execute(runnableCaptor.capture());
         
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null)));
+        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(any(), any(), any(), any(), any())).thenReturn("Templated output");
