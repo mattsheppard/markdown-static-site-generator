@@ -8,11 +8,14 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.kstruct.markdown.model.NavigationNode;
@@ -26,7 +29,7 @@ public class TemplateProcessorTest {
         Path root = fs.getPath("/root");
         Files.createDirectories(root);
         
-        String template = "<html>${siteName} ${title} ${toc.details.label} ${relativeUri} ${relativeRootUri} ${extraConfig.extraConfigExample} ${content}</html>";
+        String template = "<html>${siteName} ${title} ${toc.details.label} ${metadata.k2?last} ${relativeUri} ${relativeRootUri} ${extraConfig.extraConfigExample} ${content}</html>";
         
         Path ftl = root.resolve("example.ftl");
         Files.write(ftl, template.getBytes(StandardCharsets.UTF_8));
@@ -36,11 +39,15 @@ public class TemplateProcessorTest {
 		extraConfig.put("extraConfigExample", "extraConfigExampleValue");
 		
 		TocTree toc = new TocTree(null, new TocEntry("label", 1));
+
+		Map<String, List<String>> metadata = ImmutableMap.of(
+				"k1", ImmutableList.of("k1v1", "k1v2"),
+				"k2", ImmutableList.of("k2v1", "k2v2"));
 		
 		NavigationNode navRoot = mock(NavigationNode.class);
 		
 		TemplateProcessor tp = new TemplateProcessor(ftl, navRoot, siteName, extraConfig);
-		String result = tp.template("example 漏斗回", "title", toc, "relativeUri", "relativeRootUri");
-		Assert.assertEquals("<html>Site Name title label relativeUri relativeRootUri extraConfigExampleValue example 漏斗回</html>", result);
+		String result = tp.template("example 漏斗回", "title", toc, metadata, "relativeUri", "relativeRootUri");
+		Assert.assertEquals("<html>Site Name title label k2v2 relativeUri relativeRootUri extraConfigExampleValue example 漏斗回</html>", result);
     }
 }

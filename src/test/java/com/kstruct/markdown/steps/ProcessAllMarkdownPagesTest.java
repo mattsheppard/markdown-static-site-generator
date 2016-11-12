@@ -55,7 +55,7 @@ public class ProcessAllMarkdownPagesTest {
         when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template(any(), any(), any(), any(), any())).thenReturn("Templated output");
+        when(templateProcessor.template(any(), any(), any(), any(), any(), any())).thenReturn("Templated output");
 
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
 

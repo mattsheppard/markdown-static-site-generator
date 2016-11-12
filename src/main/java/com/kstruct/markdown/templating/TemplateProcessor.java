@@ -47,13 +47,14 @@ public class TemplateProcessor {
 		}
 	}
 
-	public String template(String content, String title, TocTree toc, String relativeUri, String relativeRootUri) {
+	public String template(String content, String title, TocTree toc, Map<String, List<String>> metadata, String relativeUri, String relativeRootUri) {
 		StringWriter result = new StringWriter();
 		
 		Map<String, Object> dataModel = new HashMap<>();
 		dataModel.put("content", content);
         dataModel.put("title", title);
         dataModel.put("toc", toc);
+        dataModel.put("metadata", metadata);
         dataModel.put("relativeUri", relativeUri);
 		dataModel.put("relativeRootUri", relativeRootUri);
         dataModel.put("siteName", siteName);

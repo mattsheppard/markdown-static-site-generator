@@ -44,7 +44,7 @@ public class ProcessSingleMarkdownPageTest {
         when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template(eq("Rendered markdown"), eq("Example"), any(), eq("example.html"), eq(""))).thenReturn("Templated output");
+        when(templateProcessor.template(eq("Rendered markdown"), eq("Example"), any(), any(), eq("example.html"), eq(""))).thenReturn("Templated output");
 
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
 
@@ -53,7 +53,7 @@ public class ProcessSingleMarkdownPageTest {
         ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(inputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator);
         
         processTask.run();
-        verify(templateProcessor).template(eq("Rendered markdown"), eq("Example"), any(), eq("example.html"), eq(""));
+        verify(templateProcessor).template(eq("Rendered markdown"), eq("Example"), any(), any(), eq("example.html"), eq(""));
         
         Path outputPath = fs.getPath("/root/output/example.html");
         String outputContent = new String(Files.readAllBytes(outputPath), StandardCharsets.UTF_8);
@@ -78,7 +78,7 @@ public class ProcessSingleMarkdownPageTest {
         when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template(eq("Rendered markdown"), eq("Deep Example"), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"))).thenReturn("Templated output");
+        when(templateProcessor.template(eq("Rendered markdown"), eq("Deep Example"), any(), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"))).thenReturn("Templated output");
         
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
         
@@ -87,7 +87,7 @@ public class ProcessSingleMarkdownPageTest {
         ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator);
         
         processTask.run();
-        verify(templateProcessor).template(eq("Rendered markdown"), eq("Deep Example"), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"));
+        verify(templateProcessor).template(eq("Rendered markdown"), eq("Deep Example"), any(), any(), eq("foo/bar/goo/gar/deep-example.html"), eq("../../../../"));
         
         Path deepOutputPath = fs.getPath("/root/output/foo/bar/goo/gar/deep-example.html");
         String deepOutputContent = new String(Files.readAllBytes(deepOutputPath), StandardCharsets.UTF_8);
@@ -114,7 +114,7 @@ public class ProcessSingleMarkdownPageTest {
         when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template(eq("Rendered markdown"), eq(expectedTitle), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"))).thenReturn("Templated output");
+        when(templateProcessor.template(eq("Rendered markdown"), eq(expectedTitle), any(), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"))).thenReturn("Templated output");
         
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
         
@@ -124,7 +124,7 @@ public class ProcessSingleMarkdownPageTest {
         ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(deepInputMd, input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator);
         
         processTask.run();
-        verify(templateProcessor).template(eq("Rendered markdown"), eq(expectedTitle), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"));
+        verify(templateProcessor).template(eq("Rendered markdown"), eq(expectedTitle), any(), any(), eq("foo/bar/goo/gar/index.html"), eq("../../../../"));
         
         Path deepOutputPath = fs.getPath("/root/output/foo/bar/goo/gar/index.html");
         String deepOutputContent = new String(Files.readAllBytes(deepOutputPath), StandardCharsets.UTF_8);
