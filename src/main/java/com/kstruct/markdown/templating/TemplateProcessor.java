@@ -12,7 +12,9 @@ import com.kstruct.markdown.model.NavigationNode;
 import com.kstruct.markdown.model.TocEntry;
 import com.kstruct.markdown.model.TocTree;
 
+import freemarker.core.HTMLOutputFormat;
 import freemarker.core.ParseException;
+import freemarker.core.TemplateConfiguration;
 import freemarker.template.Configuration;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
@@ -35,6 +37,7 @@ public class TemplateProcessor {
 		try {
 			Configuration cfg = new Configuration(new Version("2.3.25"));
 			cfg.setTemplateLoader(new NioTemplateLoader(templatePath.getParent()));
+			cfg.setOutputFormat(HTMLOutputFormat.INSTANCE);
 			template = cfg.getTemplate(templatePath.getFileName().toString());
 		} catch (TemplateNotFoundException e) {
 			throw new RuntimeException(e);

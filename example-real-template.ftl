@@ -1,6 +1,13 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>${title} - ${siteName} - Version ${extraConfig.version}</title>
+        
+        <#list metadata as key, values>
+            <#list values as value>
+                <meta name="${key}" content="${value}" />
+            </#list>
+        </#list>
     </head>
     <body>
         <#if toc.children?size &gt; 0>
@@ -12,7 +19,7 @@
         </#if>
 
          <h1>${title}</h1>
-        ${content}
+        ${content?no_esc}
 
         <ul>
             <@render_navigation node=navigationRoot/>
