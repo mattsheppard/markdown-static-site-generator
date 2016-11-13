@@ -23,7 +23,7 @@ public class IntegrationTests {
         Files.createDirectories(config);
 
         Path template = config.resolve("template.ftl");
-        Files.write(template, "${siteName} ${content}".getBytes(StandardCharsets.UTF_8));
+        Files.write(template, "${siteName} ${content?no_esc}".getBytes(StandardCharsets.UTF_8));
 
         Path input = fs.getPath("/root/input");
         Files.createDirectories(input);
