@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kstruct</groupId>
     <artifactId>markdown-static-site-generator-maven-plugin</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.4</version>
     <packaging>maven-plugin</packaging>
 
     <name>Markdown Static Site Generator</name>
