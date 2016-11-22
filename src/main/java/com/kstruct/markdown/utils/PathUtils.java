@@ -1,11 +1,36 @@
 package com.kstruct.markdown.utils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.regex.Pattern;
+
+import org.commonmark.node.Visitor;
+
+import com.kstruct.markdown.templating.MarkdownProcessor;
+import com.kstruct.markdown.templating.MarkdownProcessorResult;
 
 public class PathUtils {
 
     public static String titleForPath(Path p, Path inputRoot) {
+	    	if (Files.exists(p)) {
+			// See if we can read some title metadata from it in preference to a generated title
+			try {
+				MarkdownProcessorResult result = new MarkdownProcessor().process(new String(Files.readAllBytes(p), StandardCharsets.UTF_8), Arrays.asList(new Visitor[]{}));
+				if (result.getMetadata().containsKey("title")) {
+					Optional<String> metadataTitle = result.getMetadata().get("title").stream().findFirst();
+					if (metadataTitle.isPresent()) {
+						return metadataTitle.get();
+					}
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+	    	}
+		
         if (MarkdownUtils.isMarkdownIndexPage(p)) {
         		// Index pages are special - we title them after the directory they're in
         		p = p.getParent();
