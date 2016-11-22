@@ -12,7 +12,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.junit.Assert;
@@ -83,33 +85,31 @@ public class ProcessAllMarkdownPagesTest {
         Assert.assertEquals("Templated output", new String(Files.readAllBytes(output.resolve("subdir/example2.html")), StandardCharsets.UTF_8));
     }
 
-    @Test(expected=Error.class)
-    public void testInvalidTemplate() throws IOException {
+    @Test
+    public void testErrorReturn() throws IOException, InterruptedException, ExecutionException {
     		FileSystem fs = MockFilesystemUtils.createMockFileSystem(new FileWithContent[]{
-    				new FileWithContent("example1.md", "# example 1".getBytes(StandardCharsets.UTF_8)),
-    				new FileWithContent("subdir/example2.md", "# example 2".getBytes(StandardCharsets.UTF_8))
+    				new FileWithContent("example1.md", "# example 1".getBytes(StandardCharsets.UTF_8))
     		});
         Path input = fs.getPath("/root/input");
         Path output = fs.getPath("/root/output");
     	
-        @SuppressWarnings("unchecked")
-		ArgumentCaptor<Callable<Boolean>> callableCaptor = ArgumentCaptor.forClass(Callable.class);
-        ExecutorService pool = mock(ExecutorService.class);
-        // This is not ideal - We depend on the internal detail of calling execute on the pool
-        // where as there are many other possible pool methods which could be used instead.
-        Mockito.when(pool.submit(callableCaptor.capture())).thenReturn(CompletableFuture.completedFuture(false));
-        
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
         when(markdownRenderer.process(any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        when(templateProcessor.template(any(), any(), any(), any(), any(), any())).thenThrow(InvalidReferenceException.class);
+        when(templateProcessor.template(any(), any(), any(), any(), any(), any())).thenThrow(Exception.class);
+        // Would like to use InvalidReferenceException there (which Freemakrer can actually throw)
+        // but it null pointers when stack is printed (due to Mockito's mocking?)
 
         BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
 
         ListingPageContentGenerator listingPageContentGenerator = mock(ListingPageContentGenerator.class);
         
         ProcessAllMarkdownPages wpmf = new ProcessAllMarkdownPages();
-        wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator, pool);
+        List<Future<Boolean>> results = wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator, Executors.newFixedThreadPool(1));
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertFalse("Expected false result from processing (due to exception)", results.get(0).get());
     }
+
 }
