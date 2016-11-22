@@ -51,7 +51,7 @@ import com.kstruct.markdown.utils.PathUtils;
 
 public class MarkdownProcessor {
 
-    public MarkdownProcessorResult process(String markdownContent, List<String> siblingPages, List<String> subCategories) {
+    public MarkdownProcessorResult process(String markdownContent, List<Visitor> visitors) {
         List<Extension> extensions = Arrays.asList(TablesExtension.create(), YamlFrontMatterExtension.create());
 
         Parser parser = Parser.builder().extensions(extensions).build();
@@ -64,7 +64,9 @@ public class MarkdownProcessor {
         Set<String> linkTargets = new HashSet<>();
 
         // Modify listing headings
-        document.accept(new NavigationLinkInjector(siblingPages, subCategories));
+        for (Visitor visitor : visitors) {
+        		document.accept(visitor); // new NavigationLinkInjector(siblingPages, subCategories));
+        }
         
         // Fix links to *.md to go to *.html instead
         document.accept(new AbstractVisitor() {

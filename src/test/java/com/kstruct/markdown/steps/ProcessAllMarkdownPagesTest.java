@@ -44,7 +44,7 @@ public class ProcessAllMarkdownPagesTest {
         Mockito.doNothing().when(pool).execute(runnableCaptor.capture());
         
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-        when(markdownRenderer.process(any(), any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
+        when(markdownRenderer.process(any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
         
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
         when(templateProcessor.template(any(), any(), any(), any(), any(), any())).thenReturn("Templated output");

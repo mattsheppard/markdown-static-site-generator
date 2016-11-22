@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.commonmark.node.Visitor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,21 +18,21 @@ public class MarkdownRendererTest {
 	@Test
     public void testRendering() throws IOException {
 		MarkdownProcessor mr = new MarkdownProcessor();
-		MarkdownProcessorResult result = mr.process("# example heading", new ArrayList<>(), new ArrayList<>());
+		MarkdownProcessorResult result = mr.process("# example heading", Arrays.asList(new Visitor[]{}));
 		Assert.assertEquals("<h1 id=\"example-heading\">example heading</h1>\n", result.getRenderedContent());
     }
 
 	@Test
     public void testNonAsciiRendering() throws IOException {
 		MarkdownProcessor mr = new MarkdownProcessor();
-		MarkdownProcessorResult result = mr.process("# example 漏斗回", new ArrayList<>(), new ArrayList<>());
+		MarkdownProcessorResult result = mr.process("# example 漏斗回", Arrays.asList(new Visitor[]{}));
 		Assert.assertEquals("<h1 id=\"example-\">example 漏斗回</h1>\n", result.getRenderedContent());
     }
 
 	@Test
     public void testLinkFixing() throws IOException {
 		MarkdownProcessor mr = new MarkdownProcessor();
-		MarkdownProcessorResult result = mr.process("[title](../foo/example.md)", new ArrayList<>(), new ArrayList<>());
+		MarkdownProcessorResult result = mr.process("[title](../foo/example.md)", Arrays.asList(new Visitor[]{}));
 		
 		Assert.assertEquals("<p><a href=\"../foo/example.html\">title</a></p>\n", result.getRenderedContent());
 
@@ -43,7 +44,7 @@ public class MarkdownRendererTest {
 	   @Test
 	    public void testLinkFragment() throws IOException {
 	        MarkdownProcessor mr = new MarkdownProcessor();
-	        MarkdownProcessorResult result = mr.process("[title](example.md#someheading)", new ArrayList<>(), new ArrayList<>());
+	        MarkdownProcessorResult result = mr.process("[title](example.md#someheading)", Arrays.asList(new Visitor[]{}));
 	        
 	        Assert.assertEquals("<p><a href=\"example.html#someheading\">title</a></p>\n", result.getRenderedContent());
 	    }
@@ -57,7 +58,7 @@ public class MarkdownRendererTest {
             + "## c\n"
             + "### d\n"
             + "## e\n"
-            , new ArrayList<>(), new ArrayList<>());
+            , Arrays.asList(new Visitor[]{}));
         
         TocTree expectedToc = new TocTree(null, new TocEntry("root", -1));
         
@@ -80,7 +81,14 @@ public class MarkdownRendererTest {
     @Test
     public void testHeadingExpansion() throws IOException {
         MarkdownProcessor mr = new MarkdownProcessor();
-        MarkdownProcessorResult result = mr.process("# Generated Section - Pages\n## Generated Section - Categories\n", Arrays.asList(new String[]{"foo.md", "bar.md"}), Arrays.asList(new String[]{"cat1", "cat2"}));
+        MarkdownProcessorResult result = mr.process("# Generated Section - Pages\n## Generated Section - Categories\n", 
+        		Arrays.asList(new Visitor[]{
+        				new NavigationLinkInjector(
+    						Arrays.asList(new String[]{"foo.md", "bar.md"}), Arrays.asList(new String[]{"cat1", "cat2"})
+					)
+        			}
+			)
+    		);
         Assert.assertEquals("<h1 id=\"pages\">Pages</h1>\n"
             + "<ul>\n"
             + "<li><a href=\"foo.html\">Foo</a></li>\n"
@@ -96,21 +104,29 @@ public class MarkdownRendererTest {
     @Test
     public void testHeadingRemovalEmptyList() throws IOException {
         MarkdownProcessor mr = new MarkdownProcessor();
-        MarkdownProcessorResult result = mr.process("Something\n # Generated Section - Pages\n## Generated Section - Categories\n", Arrays.asList(new String[]{}), Arrays.asList(new String[]{}));
+
+        MarkdownProcessorResult result = mr.process("Something\n# Generated Section - Pages\n## Generated Section - Categories\n", 
+        		Arrays.asList(new Visitor[]{
+        				new NavigationLinkInjector(
+    						Arrays.asList(new String[]{}), Arrays.asList(new String[]{})
+					)
+        			}
+			)
+    		);
         Assert.assertEquals("<p>Something</p>\n", result.getRenderedContent());
     }
 
     @Test
     public void testTableRendering() throws IOException {
         MarkdownProcessor mr = new MarkdownProcessor();
-        MarkdownProcessorResult result = mr.process("| Tables        | Are           | Cool  |\r\n| ------------- |:-------------:| -----:|\r\n| one      | two | three |\r\n", new ArrayList<>(), new ArrayList<>());
+        MarkdownProcessorResult result = mr.process("| Tables        | Are           | Cool  |\r\n| ------------- |:-------------:| -----:|\r\n| one      | two | three |\r\n", Arrays.asList(new Visitor[]{}));
         Assert.assertEquals("<table>\n<thead>\n<tr><th>Tables</th><th align=\"center\">Are</th><th align=\"right\">Cool</th></tr>\n</thead>\n<tbody>\n<tr><td>one</td><td align=\"center\">two</td><td align=\"right\">three</td></tr>\n</tbody>\n</table>\n", result.getRenderedContent());
     }
 
     @Test
     public void testYamlFrontMatter() throws IOException {
         MarkdownProcessor mr = new MarkdownProcessor();
-        MarkdownProcessorResult result = mr.process("---\nkey: value\n---\ncontent", new ArrayList<>(), new ArrayList<>());
+        MarkdownProcessorResult result = mr.process("---\nkey: value\n---\ncontent", Arrays.asList(new Visitor[]{}));
         Assert.assertEquals("<p>content</p>\n", result.getRenderedContent());
         Assert.assertEquals(ImmutableMap.of("key", ImmutableList.of("value")), result.getMetadata());
     }

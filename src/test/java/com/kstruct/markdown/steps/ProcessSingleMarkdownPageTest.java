@@ -102,7 +102,7 @@ public class ProcessSingleMarkdownPageTest {
 		Path output = fs.getPath("/root/output");
 		
 		MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
-		when(markdownRenderer.process(any(), any(), any())).thenReturn(
+		when(markdownRenderer.process(any(), any())).thenReturn(
 				new MarkdownProcessorResult(expectedInputContent, new TocTree(null, null), ImmutableMap.of()));
 
 		TemplateProcessor templateProcessor = mock(TemplateProcessor.class);

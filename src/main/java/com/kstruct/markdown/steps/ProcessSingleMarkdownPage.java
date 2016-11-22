@@ -6,9 +6,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.commonmark.node.Visitor;
 
 import com.kstruct.markdown.model.TocEntry;
 import com.kstruct.markdown.model.TocTree;
@@ -16,6 +19,7 @@ import com.kstruct.markdown.templating.ListingPageContentGenerator;
 import com.kstruct.markdown.templating.ListingPageContentGenerator.ListingPageContent;
 import com.kstruct.markdown.templating.MarkdownProcessor;
 import com.kstruct.markdown.templating.MarkdownProcessorResult;
+import com.kstruct.markdown.templating.NavigationLinkInjector;
 import com.kstruct.markdown.templating.TemplateProcessor;
 import com.kstruct.markdown.utils.BrokenLinkRecorder;
 import com.kstruct.markdown.utils.MarkdownUtils;
@@ -54,7 +58,7 @@ public class ProcessSingleMarkdownPage implements Runnable {
             // TODO need to do something with this
             throw new RuntimeException(e);
         }
-        MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, listingPageContent.getPages(), listingPageContent.getCategories());
+        MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, Arrays.asList(new Visitor[]{new NavigationLinkInjector(listingPageContent.getPages(), listingPageContent.getCategories())}));
         String htmlContent = processedMarkdown.getRenderedContent();
         String title = PathUtils.titleForPath(path, inputRoot);
         String relativeUri = outputRoot.relativize(outputPath).toString();
