@@ -4,9 +4,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import com.kstruct.markdown.model.NavigationNode;
@@ -48,7 +51,7 @@ public class StaticSiteGenerator {
         ExecutorService pool = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);
         
         new CopySimpleFiles().queueCopyOperations(inputDirectory, outputDirectory, pool);
-        new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator, pool);
+        List<Future<Boolean>> results = new ProcessAllMarkdownPages().queueConversionAndWritingOperations(inputDirectory, outputDirectory, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator, pool);
         
         pool.shutdown();
         boolean terminated = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
@@ -56,7 +59,20 @@ public class StaticSiteGenerator {
         if (!terminated) {
             throw new Error("Execution pool didn't terminate correctly - Generated doc likely incomplete");
         }
+
+        Boolean anyFailed = results.stream()
+        		.anyMatch((r) -> {
+					try {
+						return r.get() == false;
+					} catch (InterruptedException | ExecutionException e) {
+						throw new Error(e);
+					}
+			});
         
+        if (anyFailed) {
+        		throw new Error("Not all pages were successfully processed - See errors above");
+        }
+        		
         if (!brokenLinkRecorder.getAllBrokenLinks().isEmpty()) {
             for (Path key : brokenLinkRecorder.getAllBrokenLinks().keySet()) {
              // TODO - Logging sensibly
