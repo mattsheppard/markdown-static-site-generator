@@ -117,7 +117,7 @@ public class ProcessSingleMarkdownPageTest {
 		ProcessSingleMarkdownPage processTask = new ProcessSingleMarkdownPage(markdownPath, input, output,
 				markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator);
 
-		processTask.run();
+		processTask.call();
 		verify(templateProcessor).template(eq(expectedInputContent), eq(expectedTitle), any(), any(),
 				eq(expectedOutputPath), eq(expectedPathToRoot));
 	}

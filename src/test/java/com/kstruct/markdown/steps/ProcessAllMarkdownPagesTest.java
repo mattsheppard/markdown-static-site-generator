@@ -10,7 +10,12 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,6 +32,8 @@ import com.kstruct.markdown.testing.utils.MockFilesystemUtils;
 import com.kstruct.markdown.testing.utils.MockFilesystemUtils.FileWithContent;
 import com.kstruct.markdown.utils.BrokenLinkRecorder;
 
+import freemarker.core.InvalidReferenceException;
+
 public class ProcessAllMarkdownPagesTest {
     @Test
     public void testCopyingFiles() throws IOException {
@@ -37,11 +44,12 @@ public class ProcessAllMarkdownPagesTest {
         Path input = fs.getPath("/root/input");
         Path output = fs.getPath("/root/output");
     	
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        @SuppressWarnings("unchecked")
+		ArgumentCaptor<Callable<Boolean>> callableCaptor = ArgumentCaptor.forClass(Callable.class);
         ExecutorService pool = mock(ExecutorService.class);
         // This is not ideal - We depend on the internal detail of calling execute on the pool
         // where as there are many other possible pool methods which could be used instead.
-        Mockito.doNothing().when(pool).execute(runnableCaptor.capture());
+        Mockito.when(pool.submit(callableCaptor.capture())).thenReturn(CompletableFuture.completedFuture(true));
         
         MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
         when(markdownRenderer.process(any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
@@ -60,9 +68,15 @@ public class ProcessAllMarkdownPagesTest {
         Assert.assertFalse(Files.exists(output.resolve("example1.html")));
         Assert.assertFalse(Files.exists(output.resolve("subdir/example2.html")));
         
-        List<Runnable> runnables = runnableCaptor.getAllValues();
-        Assert.assertEquals(2, runnables.size());
-        runnables.forEach(r -> r.run());
+        List<Callable<Boolean>> callables = callableCaptor.getAllValues();
+        Assert.assertEquals(2, callables.size());
+        callables.forEach((r) -> {
+			try {
+				r.call();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
         
         Assert.assertTrue(Files.exists(output.resolve("example1.html")));
         Assert.assertTrue(Files.exists(output.resolve("subdir/example2.html")));
@@ -70,4 +84,32 @@ public class ProcessAllMarkdownPagesTest {
         Assert.assertEquals("Templated output", new String(Files.readAllBytes(output.resolve("example1.html")), StandardCharsets.UTF_8));
         Assert.assertEquals("Templated output", new String(Files.readAllBytes(output.resolve("subdir/example2.html")), StandardCharsets.UTF_8));
     }
+
+    @Test
+    public void testErrorReturn() throws IOException, InterruptedException, ExecutionException {
+    		FileSystem fs = MockFilesystemUtils.createMockFileSystem(new FileWithContent[]{
+    				new FileWithContent("example1.md", "# example 1".getBytes(StandardCharsets.UTF_8))
+    		});
+        Path input = fs.getPath("/root/input");
+        Path output = fs.getPath("/root/output");
+    	
+        MarkdownProcessor markdownRenderer = mock(MarkdownProcessor.class);
+        when(markdownRenderer.process(any(), any())).thenReturn(new MarkdownProcessorResult("Rendered markdown", new TocTree(null, null), ImmutableMap.of()));
+        
+        TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
+        when(templateProcessor.template(any(), any(), any(), any(), any(), any())).thenThrow(Exception.class);
+        // Would like to use InvalidReferenceException there (which Freemakrer can actually throw)
+        // but it null pointers when stack is printed (due to Mockito's mocking?)
+
+        BrokenLinkRecorder brokenLinkRecorder = mock(BrokenLinkRecorder.class);
+
+        ListingPageContentGenerator listingPageContentGenerator = mock(ListingPageContentGenerator.class);
+        
+        ProcessAllMarkdownPages wpmf = new ProcessAllMarkdownPages();
+        List<Future<Boolean>> results = wpmf.queueConversionAndWritingOperations(input, output, markdownRenderer, templateProcessor, brokenLinkRecorder, listingPageContentGenerator, Executors.newFixedThreadPool(1));
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertFalse("Expected false result from processing (due to exception)", results.get(0).get());
+    }
+
 }
