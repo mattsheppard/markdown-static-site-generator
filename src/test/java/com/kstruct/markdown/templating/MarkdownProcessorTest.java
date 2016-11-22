@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kstruct.markdown.model.TocEntry;
 import com.kstruct.markdown.model.TocTree;
 
-public class MarkdownRendererTest {
+public class MarkdownProcessorTest {
 	@Test
     public void testRendering() throws IOException {
 		MarkdownProcessor mr = new MarkdownProcessor();
