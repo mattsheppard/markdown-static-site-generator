@@ -51,4 +51,36 @@ public class PathUtilsTest {
         
         Assert.assertEquals("alternate title", title);
     }
+
+    @Test
+    public void testDirectoryTitle() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+        Path input = fs.getPath("/root/input");
+        Files.createDirectories(input);
+
+        Path directory = input.resolve("directory");
+        Files.createDirectories(directory);
+        
+        String title = PathUtils.titleForPath(directory,  input);
+        
+        Assert.assertEquals("Directory", title);
+    }
+
+    @Test
+    public void testDirectoryMetadataTitle() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+        Path input = fs.getPath("/root/input");
+        Files.createDirectories(input);
+
+        Path directory = input.resolve("directory");
+        Files.createDirectories(directory);
+        
+        Path markdown = directory.resolve("index.md");
+        Files.write(markdown, "---\n  title: alternate directory title\n---\n# content".getBytes(StandardCharsets.UTF_8));
+
+        
+        String title = PathUtils.titleForPath(directory,  input);
+        
+        Assert.assertEquals("alternate directory title", title);
+    }
 }

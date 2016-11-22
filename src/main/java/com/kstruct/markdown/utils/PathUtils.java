@@ -16,10 +16,16 @@ import com.kstruct.markdown.templating.MarkdownProcessorResult;
 public class PathUtils {
 
     public static String titleForPath(Path p, Path inputRoot) {
-	    	if (Files.exists(p)) {
+        Path markdownFile = p;
+        if (Files.isDirectory(markdownFile)) {
+            // If a directory has an index.md, we'll give it the metadata title from that index
+            markdownFile = markdownFile.resolve("index.md");
+        }
+
+        if (Files.exists(markdownFile)) {
 			// See if we can read some title metadata from it in preference to a generated title
 			try {
-				MarkdownProcessorResult result = new MarkdownProcessor().process(new String(Files.readAllBytes(p), StandardCharsets.UTF_8), Arrays.asList(new Visitor[]{}));
+				MarkdownProcessorResult result = new MarkdownProcessor().process(new String(Files.readAllBytes(markdownFile), StandardCharsets.UTF_8), Arrays.asList(new Visitor[]{}));
 				if (result.getMetadata().containsKey("title")) {
 					Optional<String> metadataTitle = result.getMetadata().get("title").stream().findFirst();
 					if (metadataTitle.isPresent()) {
@@ -29,8 +35,10 @@ public class PathUtils {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-	    	}
+        }
 		
+        // No metadata title - We'll try to infer one from the file system location
+        
         if (MarkdownUtils.isMarkdownIndexPage(p)) {
         		// Index pages are special - we title them after the directory they're in
         		p = p.getParent();
