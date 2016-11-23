@@ -1,5 +1,6 @@
 package com.kstruct.markdown.templating;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +35,9 @@ public class NavigationLinkInjectorTest {
         List<String> siblingPages = Arrays.asList(new String[]{"foo.md", "bar.md"});
         List<String> subCategories = Arrays.asList(new String[]{"goo", "gar"});
         
-        NavigationLinkInjector navigationLinkInjector = new NavigationLinkInjector(siblingPages, subCategories);
+        NavigationLinkInjector navigationLinkInjector = new NavigationLinkInjector(
+            Paths.get("/example/example.md"), Paths.get("/example"),
+            siblingPages, subCategories);
 
         testDocument.accept(navigationLinkInjector);
         

@@ -47,7 +47,11 @@ public class ProcessSingleMarkdownPage implements Callable<Boolean> {
 			
 			String markdownContent = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 
-			MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, Arrays.asList(new Visitor[]{new NavigationLinkInjector(listingPageContent.getPages(), listingPageContent.getCategories())}));
+			MarkdownProcessorResult processedMarkdown = markdownProcessor.process(markdownContent, 
+			    Arrays.asList(new Visitor[]{
+                    new NavigationLinkInjector(path, inputRoot, listingPageContent.getPages(), listingPageContent.getCategories())
+                })
+		    );
 			String htmlContent = processedMarkdown.getRenderedContent();
 			String title = PathUtils.titleForPath(path, inputRoot);
 			String relativeUri = outputRoot.relativize(outputPath).toString();

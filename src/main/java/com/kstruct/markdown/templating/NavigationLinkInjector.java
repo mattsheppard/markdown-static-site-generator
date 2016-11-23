@@ -1,5 +1,6 @@
 package com.kstruct.markdown.templating;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -15,12 +16,16 @@ import com.kstruct.markdown.utils.MarkdownUtils;
 import com.kstruct.markdown.utils.PathUtils;
 
 public class NavigationLinkInjector extends AbstractVisitor {
+    private Path forPage;
+    private Path inputRoot;
     private List<String> siblingPages;
 	private List<String> subCategories;
 
-	public NavigationLinkInjector(List<String> siblingPages, List<String> subCategories) {
-    		this.siblingPages = siblingPages;
-    		this.subCategories = subCategories;
+	public NavigationLinkInjector(Path forPage, Path inputRoot, List<String> siblingPages, List<String> subCategories) {
+	    this.forPage = forPage;
+        this.inputRoot = inputRoot;
+	    this.siblingPages = siblingPages;
+		this.subCategories = subCategories;
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class NavigationLinkInjector extends AbstractVisitor {
                 BulletList list = new BulletList();
                 for (String siblingPage : siblingPages) {
                     ListItem item = new ListItem();
-                    String title = PathUtils.titleForPath(Paths.get(siblingPage), Paths.get("/"));
+                    String title = PathUtils.titleForPath(forPage.resolveSibling(siblingPage), inputRoot);
                     Link link = new Link(siblingPage, null);
                     link.appendChild(new Text(title));
                     item.appendChild(link);
@@ -66,7 +71,7 @@ public class NavigationLinkInjector extends AbstractVisitor {
                 BulletList list = new BulletList();
                 for (String subCategory : subCategories) {
                     ListItem item = new ListItem();
-                    String title = PathUtils.titleForPath(Paths.get(subCategory), Paths.get("/"));
+                    String title = PathUtils.titleForPath(forPage.resolveSibling(subCategory), inputRoot);
                     Link link = new Link(subCategory + "/" + MarkdownUtils.DIRECTORY_INDEX_FILE_NAME + MarkdownUtils.MARKDOWN_FILE_EXTENSION, null);
                     item.appendChild(link);
                     link.appendChild(new Text(title));

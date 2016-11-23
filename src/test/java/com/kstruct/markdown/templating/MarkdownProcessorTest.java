@@ -1,6 +1,7 @@
 package com.kstruct.markdown.templating;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,6 +85,7 @@ public class MarkdownProcessorTest {
         MarkdownProcessorResult result = mr.process("# Generated Section - Pages\n## Generated Section - Categories\n", 
         		Arrays.asList(new Visitor[]{
         				new NavigationLinkInjector(
+        				    Paths.get("/example/example.md"), Paths.get("/example"),
     						Arrays.asList(new String[]{"foo.md", "bar.md"}), Arrays.asList(new String[]{"cat1", "cat2"})
 					)
         			}
@@ -108,6 +110,7 @@ public class MarkdownProcessorTest {
         MarkdownProcessorResult result = mr.process("Something\n# Generated Section - Pages\n## Generated Section - Categories\n", 
         		Arrays.asList(new Visitor[]{
         				new NavigationLinkInjector(
+                            Paths.get("/example/example.md"), Paths.get("/example"),
     						Arrays.asList(new String[]{}), Arrays.asList(new String[]{})
 					)
         			}
