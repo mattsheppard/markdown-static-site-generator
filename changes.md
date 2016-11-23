@@ -1,4 +1,4 @@
-## 0.0.5-SNAPSHOT
+## 0.0.5
 - Issue #9 : Use metadata with key title in preference, even in the navigation structure where it was not previosuly available .
 - Issue #13 : Fail the maven build if the processing of one of the pages fails.
 
