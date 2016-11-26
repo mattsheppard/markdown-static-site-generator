@@ -1,3 +1,10 @@
+## 0.0.6-SNAPSHOT
+- Issue #12 - Added default values for parameters matching maven standard layout as follows
+-- inputDirectory = ${project.basedir}/src/main/resources/markdown
+-- outputDirectory = ${project.build.directory}/generated-site
+-- template = ${project.basedir}/src/main/resources/template.ftl
+-- strictLinkChecking = true
+
 ## 0.0.5
 - Issue #9 : Use metadata with key title in preference, even in the navigation structure where it was not previosuly available .
 - Issue #13 : Fail the maven build if the processing of one of the pages fails.

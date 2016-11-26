@@ -13,10 +13,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "generate-static-site")
 public class StaticSiteGeneratorMojo extends AbstractMojo {
 
-    @Parameter( property = "inputDirectory")
+    @Parameter( property = "inputDirectory", defaultValue = "${project.basedir}/src/main/resources/markdown")
     private File inputDirectory;
 
-    @Parameter( property = "outputDirectory")
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.directory}/generated-site")
     private File outputDirectory;
 
     @Parameter( property = "siteName")
@@ -25,10 +25,10 @@ public class StaticSiteGeneratorMojo extends AbstractMojo {
     @Parameter( property = "extraConfig")
     private Map<String,Object> extraConfig;
 
-    @Parameter( property = "strictLinkChecking")
+    @Parameter( property = "strictLinkChecking", defaultValue = "true")
     private Boolean strictLinkChecking;
 
-    @Parameter( property = "template")
+    @Parameter( property = "template", defaultValue = "${project.basedir}/src/main/resources/template.ftl")
     private File template;
 
     public void execute() throws MojoExecutionException {
