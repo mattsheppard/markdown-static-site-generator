@@ -57,7 +57,7 @@ public class TemplateProcessorTest {
 		extraConfig.put("extraConfigExample", "extraConfigExampleValue");
 		extraConfig.put("version", "1.2.3");
 		
-		TocTree toc = new TocTree(null, new TocEntry("label", 1));
+		TocTree toc = new TocTree(null, new TocEntry("label", 1, "label"));
 
 		Map<String, List<String>> metadata = ImmutableMap.of(
 				"k1", ImmutableList.of("k1v1", "k1v2"),
