@@ -49,17 +49,17 @@ public class MarkdownTocGenerator implements AttributeProvider {
             String label = textVisitor.getText();
             Integer level = ((Heading) node).getLevel();
             
-			String id = label.replaceAll("\\W", "-").replaceAll("-+", "-").toLowerCase();
+            String id = label.replaceAll("\\W", "-").replaceAll("-+", "-").toLowerCase();
 
-			if (usedIds.contains(id)) {
-				// Find an unused ID by appending numbers
-				int uniqueIdSuffix = 1;
-				while (usedIds.contains(id + "-" + uniqueIdSuffix)) {
-					uniqueIdSuffix++;
-				}
-				id = id + "-" + uniqueIdSuffix;
-			}
-			usedIds.add(id);
+            if (usedIds.contains(id)) {
+                // Find an unused ID by appending numbers
+                int uniqueIdSuffix = 1;
+                while (usedIds.contains(id + "-" + uniqueIdSuffix)) {
+                    uniqueIdSuffix++;
+                }
+                id = id + "-" + uniqueIdSuffix;
+            }
+            usedIds.add(id);
             
             TocEntry tocEntry = new TocEntry(label, level, id);
             toc.add(tocEntry);
