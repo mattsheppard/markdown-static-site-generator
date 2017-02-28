@@ -1,8 +1,10 @@
 package com.kstruct.markdown.utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.commonmark.renderer.html.AttributeProvider;
 import org.commonmark.node.Heading;
@@ -13,10 +15,11 @@ import com.kstruct.markdown.model.TocTree;
 
 public class MarkdownTocGenerator implements AttributeProvider {
     private List<TocEntry> toc = new ArrayList<>();
-
+    private Set<String> usedIds = new HashSet<>();
+    
     public TocTree getToc() {
         // We turn the list into a tree for the convenience of the template
-        TocTree root = new TocTree(null, new TocEntry("root", -1));
+        TocTree root = new TocTree(null, new TocEntry("root", -1, ""));
         
         TocTree currentNode = root;
         
@@ -46,7 +49,19 @@ public class MarkdownTocGenerator implements AttributeProvider {
             String label = textVisitor.getText();
             Integer level = ((Heading) node).getLevel();
             
-            TocEntry tocEntry = new TocEntry(label, level);
+            String id = label.replaceAll("\\W", "-").replaceAll("-+", "-").toLowerCase();
+            
+            if (usedIds.contains(id)) {
+            		// Find an unused ID by appending numbers
+            		int uniqueIdSuffix = 1;
+	            while (usedIds.contains(id + "-" + uniqueIdSuffix)) {
+	            		uniqueIdSuffix++;
+	            }
+	            id = id + "-" + uniqueIdSuffix;
+	        }
+            usedIds.add(id);
+            
+            TocEntry tocEntry = new TocEntry(label, level, id);
             toc.add(tocEntry);
             
             attributes.put("id", tocEntry.getAnchorId());

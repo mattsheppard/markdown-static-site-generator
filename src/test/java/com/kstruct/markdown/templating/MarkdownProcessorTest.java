@@ -61,13 +61,13 @@ public class MarkdownProcessorTest {
             + "## e\n"
             , Arrays.asList(new Visitor[]{}));
         
-        TocTree expectedToc = new TocTree(null, new TocEntry("root", -1));
+        TocTree expectedToc = new TocTree(null, new TocEntry("root", -1, ""));
         
-        TocTree a = new TocTree(expectedToc, new TocEntry("a", 1));
-        TocTree b = new TocTree(a, new TocEntry("b", 2));
-        TocTree c = new TocTree(a, new TocEntry("c", 2));
-        TocTree d = new TocTree(c, new TocEntry("d", 3));
-        TocTree e = new TocTree(a, new TocEntry("e", 2));
+        TocTree a = new TocTree(expectedToc, new TocEntry("a", 1, "a"));
+        TocTree b = new TocTree(a, new TocEntry("b", 2, "b"));
+        TocTree c = new TocTree(a, new TocEntry("c", 2, "c"));
+        TocTree d = new TocTree(c, new TocEntry("d", 3, "d"));
+        TocTree e = new TocTree(a, new TocEntry("e", 2, "e"));
         
         c.getChildren().add(d);
         a.getChildren().add(b);

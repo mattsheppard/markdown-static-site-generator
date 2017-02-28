@@ -8,8 +8,5 @@ import lombok.Data;
 public class TocEntry {
     private final String label;
     private final int level;
-
-    public String getAnchorId() {
-        return label.replaceAll("\\W", "-").replaceAll("-+", "-").toLowerCase();
-    }
+    private final String anchorId;
 }
