@@ -1,4 +1,7 @@
-## 0.0.6-SNAPSHOT
+## 0.0.7-SNAPSHOT
+
+## 0.0.6
+- Issue #15 - Ensure heading IDs are not duplicated
 - Issue #12 - Added default values for parameters matching maven standard layout as follows
 -- inputDirectory = ${project.basedir}/src/main/resources/markdown
 -- outputDirectory = ${project.build.directory}/generated-site
