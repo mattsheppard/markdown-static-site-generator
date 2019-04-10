@@ -1,4 +1,6 @@
 ## 0.0.7-SNAPSHOT
+- Fixed issue where fooindex.md was treated as an index page rather than a normal page because it ends in index.md.
+- Updated version of lombok and maven-plugin-plugin 
 
 ## 0.0.6
 - Issue #15 - Ensure heading IDs are not duplicated

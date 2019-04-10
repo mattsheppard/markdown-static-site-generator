@@ -17,7 +17,7 @@ public class MarkdownUtils {
     }
 
     public static boolean isMarkdownIndexPage(Path p) {
-        return p.getFileName().toString().endsWith(DIRECTORY_INDEX_FILE_NAME + MARKDOWN_FILE_EXTENSION);
+        return p.endsWith(DIRECTORY_INDEX_FILE_NAME + MARKDOWN_FILE_EXTENSION);
     }
 
     public static Path renamePathForMarkdownPage(Path path) {
