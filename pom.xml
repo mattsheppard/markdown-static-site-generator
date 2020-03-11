@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kstruct</groupId>
     <artifactId>markdown-static-site-generator-maven-plugin</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.7</version>
     <packaging>maven-plugin</packaging>
 
     <name>Markdown Static Site Generator</name>
@@ -31,7 +30,8 @@
         <connection>scm:git:git://github.com/mattsheppard/markdown-static-site-generator.git</connection>
         <developerConnection>scm:git:git@github.com:mattsheppard/markdown-static-site-generator.git</developerConnection>
         <url>http://github.com/mattsheppard/markdown-static-site-generator/tree/master</url>
-    </scm>
+      <tag>markdown-static-site-generator-maven-plugin-0.0.7</tag>
+  </scm>
 
     <!--<distributionManagement>-->
         <!--<snapshotRepository>-->
