@@ -3,8 +3,6 @@ package com.kstruct.markdown.utils;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
-import com.kstruct.markdown.model.MarkdownPage;
-
 public class MarkdownUtils {
     public static final String MARKDOWN_FILE_EXTENSION = ".md";
 

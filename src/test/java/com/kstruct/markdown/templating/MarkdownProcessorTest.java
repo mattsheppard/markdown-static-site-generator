@@ -123,7 +123,22 @@ public class MarkdownProcessorTest {
     public void testTableRendering() throws IOException {
         MarkdownProcessor mr = new MarkdownProcessor();
         MarkdownProcessorResult result = mr.process("| Tables        | Are           | Cool  |\r\n| ------------- |:-------------:| -----:|\r\n| one      | two | three |\r\n", Arrays.asList(new Visitor[]{}));
-        Assert.assertEquals("<table>\n<thead>\n<tr><th>Tables</th><th align=\"center\">Are</th><th align=\"right\">Cool</th></tr>\n</thead>\n<tbody>\n<tr><td>one</td><td align=\"center\">two</td><td align=\"right\">three</td></tr>\n</tbody>\n</table>\n", result.getRenderedContent());
+        Assert.assertEquals("<table>\n" + 
+            "<thead>\n" + 
+            "<tr>\n" + 
+            "<th>Tables</th>\n" + 
+            "<th align=\"center\">Are</th>\n" + 
+            "<th align=\"right\">Cool</th>\n" + 
+            "</tr>\n" + 
+            "</thead>\n" + 
+            "<tbody>\n" + 
+            "<tr>\n" + 
+            "<td>one</td>\n" + 
+            "<td align=\"center\">two</td>\n" + 
+            "<td align=\"right\">three</td>\n" + 
+            "</tr>\n" + 
+            "</tbody>\n" + 
+            "</table>\n", result.getRenderedContent());
     }
 
     @Test

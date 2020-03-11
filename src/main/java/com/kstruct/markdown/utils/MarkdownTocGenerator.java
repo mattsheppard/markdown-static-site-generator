@@ -41,7 +41,7 @@ public class MarkdownTocGenerator implements AttributeProvider {
     }
     
     @Override
-    public void setAttributes(Node node, Map<String, String> attributes) {
+    public void setAttributes(Node node, String tagName, Map<String, String> attributes) {
         if (node instanceof Heading) {
             MarkdownTextVisitor textVisitor = new MarkdownTextVisitor();
             node.accept(textVisitor);
